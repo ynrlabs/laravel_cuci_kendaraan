@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CuciKuy - Checkout & Struk</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@500&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Montserrat:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#111c2d",
+                        "on-error-container": "#93000a",
+                        "surface": "#f8f9ff",
+                        "surface-bg": "#F8FAFC",
+                        "action-yellow": "#FFD600",
+                        "success-green": "#10B981",
+                        "on-secondary-fixed-variant": "#3c475a",
+                        "surface-container-high": "#dce9ff",
+                        "surface-dim": "#cbdbf5",
+                        "tertiary": "#863500",
+                        "primary": "#003ec7",
+                        "primary-fixed-dim": "#b7c4ff",
+                        "tertiary-fixed": "#ffdbcc",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#7a3000",
+                        "surface-bright": "#f8f9ff",
+                        "primary-container": "#0052ff",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface": "#0b1c30",
+                        "background": "#f8f9ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-primary-fixed-variant": "#0038b6",
+                        "error-red": "#EF4444",
+                        "tertiary-container": "#ad4600",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary-container": "#ffded0",
+                        "warning-yellow": "#FBBF24",
+                        "on-secondary-container": "#586377",
+                        "surface-container": "#e5eeff",
+                        "inverse-surface": "#213145",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#bcc7de",
+                        "on-error": "#ffffff",
+                        "on-background": "#0b1c30",
+                        "secondary": "#545f73",
+                        "surface-tint": "#004ced",
+                        "tertiary-fixed-dim": "#ffb693",
+                        "error": "#ba1a1a",
+                        "inverse-primary": "#b7c4ff",
+                        "on-primary-container": "#dfe3ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#351000",
+                        "on-surface-variant": "#434656",
+                        "surface-container-highest": "#d3e4fe",
+                        "outline": "#737688",
+                        "outline-variant": "#c3c5d9",
+                        "secondary-fixed": "#d8e3fb",
+                        "on-primary-fixed": "#001452",
+                        "surface-container-low": "#eff4ff",
+                        "secondary-container": "#d5e0f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "32px",
+                        "unit": "4px",
+                        "gutter-grid": "20px",
+                        "stack-sm": "8px",
+                        "margin-mobile": "16px",
+                        "stack-md": "16px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Montserrat"],
+                        "headline-md": ["Montserrat"],
+                        "body-sm": ["Inter"],
+                        "display-lg": ["Montserrat"],
+                        "stat-value": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "code-booking": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "stat-value": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                        "code-booking": ["16px", {"lineHeight": "24px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .thermal-receipt {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(to bottom, #ffffff 0%, #fafafa 100%);
+            position: relative;
+        }
+        .thermal-receipt::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(-45deg, transparent 5px, #ffffff 5px), linear-gradient(45deg, transparent 5px, #ffffff 5px);
+            background-size: 10px 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-surface-bg text-on-surface font-body-md">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[280px] border-r border-outline-variant bg-surface-container-lowest flex flex-col p-stack-md z-50">
+<div class="mb-10 px-4">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">CuciKuy</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Admin Management</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">drag_handle</span>
+<span class="font-body-md">Queue</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold" href="#">
+<span class="material-symbols-outlined">calendar_month</span>
+<span class="font-body-md">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">badge</span>
+<span class="font-body-md">Employees</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-body-md">Reports</span>
+</a>
+</nav>
+<button class="mt-auto w-full bg-primary-container text-on-primary-container py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform active:scale-95">
+<span class="material-symbols-outlined">add</span>
+            New Booking
+        </button>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-40 flex justify-between items-center px-stack-lg">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface">Checkout & Struk</h2>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">CuciKuy Kelapa Gading</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative flex items-center bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant focus-within:ring-2 focus-within:ring-primary transition-all">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-64" placeholder="Search transactions..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-colors">help</button>
+<div class="w-8 h-8 rounded-full bg-primary-fixed overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged male manager with short dark hair, wearing a crisp white uniform with a subtle company logo, set against a clean studio background with soft cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSQgjHE9eWwzY87gjilrJF5ykcdpAgENhcF-GHzJ1p5wqUPzCkDiy3fd3hwFr7MtMog2pndVC3qOOEziDIKs51aX7FU0rOlUxtDfqrNkITgo86M-1csmTw1HBYHTD-_zAacbZd9YJzNagMbW8_umcPtVZ_i4qZEfnKddEbE4RJfa_hgqN6oyLB5X7iIIq7HJoC05avjwxWXqoFJ7L2jcXp5JMRhWZaBC8-iB7RIVyPn-6HP1NGkJwyuw"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-16 min-h-screen flex">
+<!-- Left Section: Payments & Receipt -->
+<div class="flex-1 p-stack-lg space-y-stack-lg">
+<!-- Payment Methods -->
+<section class="space-y-stack-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">payments</span>
+<h3 class="font-headline-md text-headline-md">Metode Pembayaran</h3>
+</div>
+<div class="grid grid-cols-3 gap-stack-md">
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-primary bg-primary-fixed/20 transition-all hover:shadow-lg">
+<span class="material-symbols-outlined text-4xl text-primary">payments</span>
+<span class="font-bold font-body-md">Cash</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-outline-variant bg-surface-container-lowest transition-all hover:border-primary/50 hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant">qr_code_2</span>
+<span class="font-bold font-body-md">QRIS</span>
+</button>
+<button class="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-outline-variant bg-surface-container-lowest transition-all hover:border-primary/50 hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant">account_balance</span>
+<span class="font-bold font-body-md">Transfer Bank</span>
+</button>
+</div>
+<!-- Split Payment Toggle -->
+<div class="glass-card p-stack-md rounded-xl space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-secondary-container">call_split</span>
+<span class="font-bold font-body-md">Split Payment</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-outline-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-outline uppercase">Amount 1</label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-on-surface-variant">Rp</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-surface-container-low font-code-booking focus:ring-2 focus:ring-primary focus:border-transparent outline-none" type="text" value="500.000"/>
+</div>
+</div>
+<div class="space-y-1">
+<label class="font-label-caps text-label-caps text-outline uppercase">Amount 2</label>
+<div class="relative opacity-50">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-on-surface-variant">Rp</span>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-surface-container-low font-code-booking cursor-not-allowed" disabled="" placeholder="0" type="text"/>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Print Preview Section -->
+<section class="space-y-stack-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">print</span>
+<h3 class="font-headline-md text-headline-md">Print Preview</h3>
+</div>
+<button class="text-primary font-bold text-body-sm flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-sm">settings</span>
+                        Printer Settings
+                    </button>
+</div>
+<div class="flex justify-center bg-surface-dim/30 py-10 rounded-2xl border border-dashed border-outline-variant">
+<!-- Thermal Receipt -->
+<div class="thermal-receipt w-[320px] p-6 font-code-booking text-sm text-on-surface-variant">
+<div class="text-center mb-6">
+<h4 class="font-headline-md text-on-surface mb-1">CuciKuy</h4>
+<p>Kelapa Gading Branch</p>
+<p>Jl. Boulevard Raya No. 12</p>
+<p>Telp: 021-555-0123</p>
+</div>
+<div class="border-t border-dashed border-outline-variant my-4"></div>
+<div class="space-y-1 mb-4">
+<div class="flex justify-between">
+<span>DATE:</span>
+<span>24-MAY-2024</span>
+</div>
+<div class="flex justify-between">
+<span>TIME:</span>
+<span>14:35:12</span>
+</div>
+<div class="flex justify-between">
+<span>ORDER:</span>
+<span>#CK-88921</span>
+</div>
+<div class="flex justify-between">
+<span>CASHIER:</span>
+<span>ADAM G.</span>
+</div>
+</div>
+<div class="border-t border-dashed border-outline-variant my-4"></div>
+<div class="space-y-2 mb-6">
+<div>
+<div class="flex justify-between font-bold text-on-surface">
+<span>FULL DETAILING</span>
+<span>350,000</span>
+</div>
+<div class="text-xs">Premium SUV Treatment</div>
+</div>
+<div>
+<div class="flex justify-between font-bold text-on-surface">
+<span>POLISH & WAX</span>
+<span>150,000</span>
+</div>
+<div class="text-xs">Nano Ceramic Infused</div>
+</div>
+</div>
+<div class="border-t border-dashed border-outline-variant my-4"></div>
+<div class="space-y-1">
+<div class="flex justify-between">
+<span>Subtotal</span>
+<span>500,000</span>
+</div>
+<div class="flex justify-between">
+<span>Tax (11%)</span>
+<span>55,000</span>
+</div>
+<div class="flex justify-between font-bold text-lg text-on-surface mt-2">
+<span>TOTAL</span>
+<span>555,000</span>
+</div>
+</div>
+<div class="border-t border-dashed border-outline-variant my-4"></div>
+<div class="text-center space-y-1 mt-6">
+<p>Terima Kasih!</p>
+<p>Mobil Bersih, Hati Senang.</p>
+<div class="mt-4 flex justify-center">
+<span class="material-symbols-outlined text-4xl">qr_code</span>
+</div>
+<p class="text-xs mt-2">Scan for Feedback</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Sidebar: Order Summary -->
+<aside class="w-[400px] border-l border-outline-variant bg-surface-container-lowest p-stack-lg flex flex-col">
+<h3 class="font-headline-md text-headline-md mb-stack-lg">Order Summary</h3>
+<div class="flex-1 space-y-6">
+<!-- Vehicle Info -->
+<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant">
+<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-3xl">directions_car</span>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline">LICENSE PLATE</p>
+<p class="font-code-booking text-on-surface font-bold">B 1234 KYY</p>
+</div>
+</div>
+<!-- Service Breakdown -->
+<div class="space-y-4">
+<p class="font-label-caps text-label-caps text-outline uppercase border-b border-outline-variant pb-2">Services</p>
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-on-surface">Full Detailing</p>
+<p class="text-sm text-on-surface-variant">Interior + Exterior + Engine</p>
+</div>
+<p class="font-bold">Rp350.000</p>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<p class="font-bold text-on-surface">Polish & Wax</p>
+<p class="text-sm text-on-surface-variant">3-Step Correction</p>
+</div>
+<p class="font-bold">Rp150.000</p>
+</div>
+</div>
+<!-- Totals -->
+<div class="space-y-3 pt-6 border-t-2 border-outline-variant">
+<div class="flex justify-between text-on-surface-variant">
+<span>Subtotal</span>
+<span>Rp500.000</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Service Tax (11%)</span>
+<span>Rp55.000</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Discount</span>
+<span class="text-success-green">-Rp0</span>
+</div>
+<div class="flex justify-between items-center py-4 px-4 bg-primary-container/10 rounded-xl mt-4 border border-primary/20">
+<span class="font-bold text-on-surface">Grand Total</span>
+<span class="text-2xl font-stat-value text-primary">Rp555.000</span>
+</div>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="mt-auto pt-6">
+<div class="flex items-center gap-4 mb-4 text-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-warning-yellow">info</span>
+<span>Pastikan semua data sudah benar sebelum cetak struk.</span>
+</div>
+<button class="w-full bg-primary-container text-on-primary-container hover:bg-primary-container/90 py-5 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-primary/20 transition-all hover:-translate-y-1 active:translate-y-0">
+<span class="material-symbols-outlined">print_connect</span>
+<span class="text-body-lg">Cetak Struk & Selesai</span>
+</button>
+</div>
+</aside>
+</main>
+<!-- Floating Atmosphere Elements -->
+<div class="fixed bottom-8 left-8 z-10 pointer-events-none opacity-20">
+<div class="w-64 h-64 bg-primary-container blur-[100px] rounded-full"></div>
+</div>
+<div class="fixed top-8 right-8 z-10 pointer-events-none opacity-20">
+<div class="w-48 h-48 bg-action-yellow blur-[80px] rounded-full"></div>
+</div>
+<script>
+        // Micro-interactions for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.add('scale-95');
+                setTimeout(() => this.classList.remove('scale-95'), 100);
+            });
+        });
+
+        // Split Payment Toggle Logic
+        const splitToggle = document.querySelector('input[type="checkbox"]');
+        const amount2Input = document.querySelector('input[placeholder="0"]');
+        const amount2Container = amount2Input.parentElement;
+
+        splitToggle.addEventListener('change', function() {
+            if (this.checked) {
+                amount2Input.disabled = false;
+                amount2Container.classList.remove('opacity-50');
+                amount2Input.classList.remove('cursor-not-allowed');
+                amount2Input.focus();
+            } else {
+                amount2Input.disabled = true;
+                amount2Container.classList.add('opacity-50');
+                amount2Input.classList.add('cursor-not-allowed');
+            }
+        });
+    </script>
+</body></html>

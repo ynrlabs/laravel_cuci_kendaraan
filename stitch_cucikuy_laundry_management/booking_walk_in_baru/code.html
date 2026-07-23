@@ -1,0 +1,408 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CuciKuy Admin - New Booking</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Inter:wght@400;500;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .step-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: .5; transform: scale(1.1); }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-container": "#dfe3ff",
+                      "on-primary-fixed-variant": "#0038b6",
+                      "outline": "#737688",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#545f73",
+                      "outline-variant": "#c3c5d9",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#dde1ff",
+                      "surface": "#f8f9ff",
+                      "error": "#ba1a1a",
+                      "on-surface": "#0b1c30",
+                      "tertiary-fixed-dim": "#ffb693",
+                      "surface-container-low": "#eff4ff",
+                      "inverse-surface": "#213145",
+                      "background": "#f8f9ff",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-tertiary": "#ffffff",
+                      "action-yellow": "#FFD600",
+                      "primary-fixed-dim": "#b7c4ff",
+                      "on-surface-variant": "#434656",
+                      "warning-yellow": "#FBBF24",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-fixed-variant": "#7a3000",
+                      "tertiary-container": "#ad4600",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#ffded0",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed": "#001452",
+                      "secondary-fixed": "#d8e3fb",
+                      "on-background": "#0b1c30",
+                      "surface-container": "#e5eeff",
+                      "secondary-container": "#d5e0f8",
+                      "secondary-fixed-dim": "#bcc7de",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface-container-high": "#dce9ff",
+                      "on-tertiary-fixed": "#351000",
+                      "surface-dim": "#cbdbf5",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#0052ff",
+                      "tertiary": "#863500",
+                      "inverse-primary": "#b7c4ff",
+                      "surface-bg": "#F8FAFC",
+                      "success-green": "#10B981",
+                      "error-red": "#EF4444",
+                      "on-secondary-container": "#586377",
+                      "surface-variant": "#d3e4fe",
+                      "surface-tint": "#004ced",
+                      "tertiary-fixed": "#ffdbcc",
+                      "on-secondary-fixed": "#111c2d",
+                      "primary": "#003ec7"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "margin-mobile": "16px",
+                      "unit": "4px",
+                      "gutter-grid": "20px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Montserrat"],
+                      "code-booking": ["JetBrains Mono"],
+                      "label-caps": ["Inter"],
+                      "headline-lg": ["Montserrat"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "display-lg": ["Montserrat"],
+                      "body-lg": ["Inter"],
+                      "stat-value": ["Montserrat"],
+                      "headline-md": ["Montserrat"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "code-booking": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "stat-value": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface-bg font-body-md text-on-surface">
+<!-- Side Navigation Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface-container-lowest border-r border-outline-variant flex flex-col p-stack-md z-50">
+<div class="mb-stack-lg">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">CuciKuy</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Admin Management</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<!-- Queue -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="drag_handle">drag_handle</span>
+<span class="font-body-md text-body-md">Queue</span>
+</a>
+<!-- Bookings (ACTIVE) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md text-body-md">Bookings</span>
+</a>
+<!-- Employees -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-body-md text-body-md">Employees</span>
+</a>
+<!-- Reports -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-body-md text-body-md">Reports</span>
+</a>
+</nav>
+<div class="mt-auto pt-stack-md border-t border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center">
+<img class="w-full h-full rounded-full object-cover" data-alt="A professional portrait of a tech-savvy service manager in a clean, modern automotive office. The lighting is crisp and bright, highlighting high-tech equipment in the background. The manager is wearing a professional polo with a subtle logo, conveying trustworthiness and expertise in a high-speed digital efficiency workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfDhFagcAByZpkQPrNkEB5aJN1si2bctj0B5POaoTBD9LPAUVH0w5eYDBGOJSOG-r56XdkRDkGHUSBUlpFpyzmC-sqUjPEaMvrMZec_DiyrJ3Il2U9JfmL2pI0U55DVyVRP2l5QGLUr7FbCCjaOxSI5ev5iVaEuee1GTJiZb-DvKmIxrkKpX6HZ5f4LTnGLPgSVdNzu9NAxb-VWUNj4ZMTlGWnh37ZAyP8wQhnNFu4ybaaHdE5O9mvhQ">
+</div>
+<div>
+<p class="font-body-sm text-body-sm font-bold">Admin Manager</p>
+<p class="text-[12px] text-on-surface-variant">Branch: Kelapa Gading</p>
+</div>
+</div>
+</aside>
+<!-- Top App Bar Shell -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-stack-lg z-40">
+<div class="flex items-center gap-4">
+<h2 class="font-headline-md text-headline-md font-semibold text-on-surface">New Booking</h2>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Walk-in Customer Entry</p>
+</div>
+<div class="flex items-center gap-stack-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-sm focus:ring-2 focus:ring-primary focus:outline-none w-64 transition-all" placeholder="Search orders..." type="text">
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-16 p-stack-lg min-h-screen">
+<div class="max-w-5xl mx-auto py-stack-md">
+<!-- Form Grid Layout -->
+<form class="grid grid-cols-12 gap-stack-lg">
+<!-- Left Column: Primary Details (8 Cols) -->
+<div class="col-span-8 space-y-stack-lg">
+<!-- Section: Customer Identity -->
+<section class="glass-card p-stack-lg rounded-xl shadow-sm">
+<div class="flex items-center gap-2 mb-stack-md">
+<span class="material-symbols-outlined text-primary" data-icon="person">person</span>
+<h3 class="font-headline-md text-headline-md">Customer Information</h3>
+</div>
+<div class="grid grid-cols-2 gap-stack-md">
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-outline uppercase">Full Name</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md" placeholder="Enter customer name" required="" type="text">
+</div>
+<div class="space-y-unit">
+<label class="font-label-caps text-label-caps text-outline uppercase">Phone Number</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant bg-surface-container-lowest focus:ring-2 focus:ring-primary focus:border-primary transition-all font-body-md" placeholder="08xx xxxx xxxx" required="" type="tel">
+</div>
+</div>
+</section>
+<!-- Section: Vehicle Details -->
+<section class="glass-card p-stack-lg rounded-xl shadow-sm">
+<div class="flex items-center gap-2 mb-stack-md">
+<span class="material-symbols-outlined text-primary" data-icon="directions_car">directions_car</span>
+<h3 class="font-headline-md text-headline-md">Vehicle Specification</h3>
+</div>
+<div class="grid grid-cols-12 gap-stack-md">
+<div class="col-span-12 space-y-stack-sm">
+<label class="font-label-caps text-label-caps text-outline uppercase">Vehicle Type</label>
+<div class="grid grid-cols-4 gap-stack-sm">
+<label class="relative flex flex-col items-center justify-center p-stack-md border-2 border-outline-variant rounded-xl cursor-pointer hover:bg-primary-fixed hover:border-primary transition-all peer-checked:bg-primary-container peer-checked:border-primary group">
+<input checked="" class="sr-only peer" name="vehicle_type" type="radio" value="sedan">
+<span class="material-symbols-outlined text-3xl mb-2 text-outline group-hover:text-primary transition-colors" data-icon="directions_car">directions_car</span>
+<span class="font-label-caps text-label-caps">SEDAN</span>
+</label>
+<label class="relative flex flex-col items-center justify-center p-stack-md border-2 border-outline-variant rounded-xl cursor-pointer hover:bg-primary-fixed hover:border-primary transition-all group">
+<input class="sr-only peer" name="vehicle_type" type="radio" value="suv">
+<span class="material-symbols-outlined text-3xl mb-2 text-outline group-hover:text-primary transition-colors" data-icon="airport_shuttle">airport_shuttle</span>
+<span class="font-label-caps text-label-caps">SUV/MPV</span>
+</label>
+<label class="relative flex flex-col items-center justify-center p-stack-md border-2 border-outline-variant rounded-xl cursor-pointer hover:bg-primary-fixed hover:border-primary transition-all group">
+<input class="sr-only peer" name="vehicle_type" type="radio" value="pickup">
+<span class="material-symbols-outlined text-3xl mb-2 text-outline group-hover:text-primary transition-colors" data-icon="truck_thin">back_hand</span>
+<span class="font-label-caps text-label-caps">PICKUP</span>
+</label>
+<label class="relative flex flex-col items-center justify-center p-stack-md border-2 border-outline-variant rounded-xl cursor-pointer hover:bg-primary-fixed hover:border-primary transition-all group">
+<input class="sr-only peer" name="vehicle_type" type="radio" value="motor">
+<span class="material-symbols-outlined text-3xl mb-2 text-outline group-hover:text-primary transition-colors" data-icon="moped">moped</span>
+<span class="font-label-caps text-label-caps">MOTOR</span>
+</label>
+</div>
+</div>
+<div class="col-span-12 space-y-unit mt-stack-sm">
+<label class="font-label-caps text-label-caps text-outline uppercase">Plate Number</label>
+<input class="w-full px-6 py-4 rounded-xl border-2 border-outline-variant bg-surface-container-low focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all font-code-booking text-2xl uppercase tracking-widest text-center" placeholder="B 1234 XYZ" required="" type="text">
+</div>
+</div>
+</section>
+<!-- Section: Service Packages -->
+<section class="glass-card p-stack-lg rounded-xl shadow-sm">
+<div class="flex items-center gap-2 mb-stack-md">
+<span class="material-symbols-outlined text-primary" data-icon="cleaning_services">cleaning_services</span>
+<h3 class="font-headline-md text-headline-md">Service Selection</h3>
+</div>
+<div class="space-y-stack-sm">
+<!-- Service Card: Basic -->
+<div class="relative group cursor-pointer border-2 border-outline-variant rounded-2xl p-stack-md flex items-center gap-4 transition-all hover:border-primary hover:bg-primary-fixed/30 active:scale-[0.98]">
+<input checked="" class="sr-only" name="service" type="radio" value="basic">
+<div class="w-14 h-14 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+<span class="material-symbols-outlined text-3xl" data-icon="water_drop">water_drop</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline-md text-headline-md">Basic Wash</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Exterior foam wash, tire dressing, &amp; rinse.</p>
+</div>
+<div class="text-right">
+<p class="font-stat-value text-headline-md text-primary">IDR 50k</p>
+<p class="font-label-caps text-label-caps text-outline">~20 MIN</p>
+</div>
+</div>
+<!-- Service Card: Wax -->
+<div class="relative group cursor-pointer border-2 border-outline-variant rounded-2xl p-stack-md flex items-center gap-4 transition-all hover:border-primary hover:bg-primary-fixed/30 active:scale-[0.98]">
+<input class="sr-only" name="service" type="radio" value="wax">
+<div class="w-14 h-14 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+<span class="material-symbols-outlined text-3xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline-md text-headline-md">Wax &amp; Polish</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Basic wash + premium carnauba wax coating.</p>
+</div>
+<div class="text-right">
+<p class="font-stat-value text-headline-md text-primary">IDR 120k</p>
+<p class="font-label-caps text-label-caps text-outline">~45 MIN</p>
+</div>
+</div>
+<!-- Service Card: Detailing -->
+<div class="relative group cursor-pointer border-2 border-outline-variant rounded-2xl p-stack-md flex items-center gap-4 transition-all hover:border-primary hover:bg-primary-fixed/30 active:scale-[0.98]">
+<input class="sr-only" name="service" type="radio" value="detailing">
+<div class="w-14 h-14 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all">
+<span class="material-symbols-outlined text-3xl" data-icon="high_quality">high_quality</span>
+</div>
+<div class="flex-1">
+<h4 class="font-headline-md text-headline-md">Full Detailing</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Interior deep clean, engine bay, &amp; paint correction.</p>
+</div>
+<div class="text-right">
+<p class="font-stat-value text-headline-md text-primary">IDR 350k</p>
+<p class="font-label-caps text-label-caps text-outline">~180 MIN</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Summary & Payment (4 Cols) -->
+<div class="col-span-4 space-y-stack-lg">
+<!-- Summary Card -->
+<div class="glass-card p-stack-lg rounded-xl shadow-lg border-primary/20 sticky top-24">
+<h3 class="font-headline-md text-headline-md mb-stack-md">Order Summary</h3>
+<div class="space-y-stack-sm mb-stack-lg border-b border-outline-variant pb-stack-md">
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Basic Wash</span>
+<span class="font-bold">IDR 50,000</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">SUV Surcharge</span>
+<span class="font-bold">IDR 15,000</span>
+</div>
+<div class="flex justify-between items-center text-body-sm">
+<span class="text-on-surface-variant">Service Tax (2%)</span>
+<span class="font-bold">IDR 1,300</span>
+</div>
+</div>
+<div class="flex justify-between items-end mb-stack-lg">
+<span class="font-label-caps text-label-caps text-outline uppercase">Total Amount</span>
+<span class="font-stat-value text-stat-value text-primary">IDR 66,300</span>
+</div>
+<!-- Payment Method Toggle -->
+<div class="space-y-stack-sm mb-stack-lg">
+<label class="font-label-caps text-label-caps text-outline uppercase">Payment Method</label>
+<div class="grid grid-cols-2 gap-stack-sm">
+<button class="flex flex-col items-center gap-1 py-3 border-2 border-primary bg-primary-container rounded-xl text-primary font-bold" type="button">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-[12px]">CASH</span>
+</button>
+<button class="flex flex-col items-center gap-1 py-3 border-2 border-outline-variant bg-surface-container-low rounded-xl text-on-surface-variant hover:border-primary transition-all" type="button">
+<span class="material-symbols-outlined" data-icon="qr_code_2">qr_code_2</span>
+<span class="text-[12px]">QRIS</span>
+</button>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full py-5 bg-primary text-white rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg shadow-primary/20 hover:bg-primary-container hover:text-on-primary-container hover:scale-[1.02] active:scale-[0.98] transition-all" type="submit">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                            CONFIRM BOOKING
+                        </button>
+<button class="w-full mt-stack-md py-3 text-error font-semibold flex items-center justify-center gap-2 hover:bg-error-container/50 rounded-xl transition-all" type="button">
+<span class="material-symbols-outlined text-sm" data-icon="close">close</span>
+                            Discard Draft
+                        </button>
+</div>
+<!-- Additional Info Widget -->
+<div class="bg-surface-container rounded-xl p-stack-md">
+<div class="flex items-center gap-3 text-on-secondary-container">
+<div class="w-8 h-8 rounded-full bg-success-green/20 flex items-center justify-center text-success-green">
+<span class="material-symbols-outlined text-sm" data-icon="verified_user">verified_user</span>
+</div>
+<p class="text-[12px] leading-tight font-medium">Auto-apply loyalty discount for returning members</p>
+</div>
+</div>
+</div>
+</form>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        // Vehicle selection active state styling
+        const vehicleLabels = document.querySelectorAll('input[name="vehicle_type"]');
+        vehicleLabels.forEach(input => {
+            input.addEventListener('change', (e) => {
+                // Remove active classes from all parents
+                document.querySelectorAll('input[name="vehicle_type"]').forEach(i => {
+                    const parent = i.closest('label');
+                    parent.classList.remove('bg-primary-container', 'border-primary');
+                    parent.classList.add('border-outline-variant');
+                });
+                // Add to current
+                if (e.target.checked) {
+                    const parent = e.target.closest('label');
+                    parent.classList.add('bg-primary-container', 'border-primary');
+                    parent.classList.remove('border-outline-variant');
+                }
+            });
+        });
+
+        // Service card selection
+        const serviceCards = document.querySelectorAll('input[name="service"]');
+        serviceCards.forEach(input => {
+            input.parentElement.addEventListener('click', () => {
+                input.checked = true;
+                // Highlight logic
+                document.querySelectorAll('input[name="service"]').forEach(i => {
+                    i.parentElement.classList.remove('bg-primary-fixed/30', 'border-primary');
+                    i.parentElement.classList.add('border-outline-variant');
+                });
+                input.parentElement.classList.add('bg-primary-fixed/30', 'border-primary');
+                input.parentElement.classList.remove('border-outline-variant');
+            });
+        });
+    </script>
+</body></html>

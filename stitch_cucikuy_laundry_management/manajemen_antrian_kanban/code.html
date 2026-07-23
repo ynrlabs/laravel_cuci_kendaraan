@@ -1,0 +1,416 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>CuciKuy | Queue Management</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Montserrat:wght@600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Montserrat:wght@100..900&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary-container": "#dfe3ff",
+                      "on-primary-fixed-variant": "#0038b6",
+                      "outline": "#737688",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#545f73",
+                      "outline-variant": "#c3c5d9",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#dde1ff",
+                      "surface": "#f8f9ff",
+                      "error": "#ba1a1a",
+                      "on-surface": "#0b1c30",
+                      "tertiary-fixed-dim": "#ffb693",
+                      "surface-container-low": "#eff4ff",
+                      "inverse-surface": "#213145",
+                      "background": "#f8f9ff",
+                      "on-secondary-fixed-variant": "#3c475a",
+                      "on-secondary": "#ffffff",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-tertiary": "#ffffff",
+                      "action-yellow": "#FFD600",
+                      "primary-fixed-dim": "#b7c4ff",
+                      "on-surface-variant": "#434656",
+                      "warning-yellow": "#FBBF24",
+                      "surface-bright": "#f8f9ff",
+                      "on-tertiary-fixed-variant": "#7a3000",
+                      "tertiary-container": "#ad4600",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-container": "#ffded0",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed": "#001452",
+                      "secondary-fixed": "#d8e3fb",
+                      "on-background": "#0b1c30",
+                      "surface-container": "#e5eeff",
+                      "secondary-container": "#d5e0f8",
+                      "secondary-fixed-dim": "#bcc7de",
+                      "inverse-on-surface": "#eaf1ff",
+                      "surface-container-high": "#dce9ff",
+                      "on-tertiary-fixed": "#351000",
+                      "surface-dim": "#cbdbf5",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#0052ff",
+                      "tertiary": "#863500",
+                      "inverse-primary": "#b7c4ff",
+                      "surface-bg": "#F8FAFC",
+                      "success-green": "#10B981",
+                      "error-red": "#EF4444",
+                      "on-secondary-container": "#586377",
+                      "surface-variant": "#d3e4fe",
+                      "surface-tint": "#004ced",
+                      "tertiary-fixed": "#ffdbcc",
+                      "on-secondary-fixed": "#111c2d",
+                      "primary": "#003ec7"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-sm": "8px",
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "margin-mobile": "16px",
+                      "unit": "4px",
+                      "gutter-grid": "20px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Montserrat"],
+                      "code-booking": ["JetBrains Mono"],
+                      "label-caps": ["Inter"],
+                      "headline-lg": ["Montserrat"],
+                      "body-md": ["Inter"],
+                      "body-sm": ["Inter"],
+                      "display-lg": ["Montserrat"],
+                      "body-lg": ["Inter"],
+                      "stat-value": ["Montserrat"],
+                      "headline-md": ["Montserrat"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                      "code-booking": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "stat-value": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .kanban-column {
+            min-width: 320px;
+            max-width: 400px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .pulse-indicator {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c3c5d9;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-surface-bg font-body-md text-on-surface">
+<!-- Layout Wrapper -->
+<div class="flex h-screen overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[280px] border-r border-outline-variant bg-surface-container-lowest flex flex-col p-stack-md z-30">
+<div class="mb-stack-lg px-4">
+<h1 class="font-headline-lg text-headline-lg font-bold text-primary">CuciKuy</h1>
+<p class="text-body-sm text-outline font-medium">Admin Management</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl font-bold" href="#">
+<span class="material-symbols-outlined" data-icon="drag_handle">drag_handle</span>
+<span class="font-body-md">Queue</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="font-body-md">Bookings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-body-md">Employees</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-xl" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-body-md">Reports</span>
+</a>
+</nav>
+<button class="mt-auto w-full bg-primary-container text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Booking
+            </button>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] flex-1 flex flex-col h-screen overflow-hidden">
+<!-- TopAppBar -->
+<header class="h-16 flex justify-between items-center px-stack-lg w-full bg-surface/80 backdrop-blur-md border-b border-outline-variant z-20">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-96">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-outline" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 focus:ring-2 focus:ring-primary text-body-sm transition-all" placeholder="Search license plate or customer..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+<span class="font-headline-md text-headline-md font-semibold text-on-surface">CuciKuy Kelapa Gading</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="w-10 h-10 rounded-full border-2 border-primary overflow-hidden cursor-pointer active:scale-95 transition-transform">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a service center manager in a clean, high-tech industrial office setting. The lighting is soft and corporate, with a background featuring vehicle diagnostics screens and a blurred car service bay. The aesthetic is modern, professional, and efficient." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4fG6nOQxleauGLKmxOW6dcKnHD5IZHYPnQQeDjFUI2Os6W7sW8wjL7u-S3gv86_qoUJc0df1ln3iSpQj4DaYcC7ssM5IKX_IPMaNPsaoOGMsI6KLFisJNNVGDyYa2J-x59T3clsAWblTCzGH5cUnsuENSw0VtT5AYdhBZFLO3Q1Ss0_wByhCQQKz2Mgib4-SOqDHc6iZBUZIXCr7XcVuDpUQOlrs6d6aWnKcBOc9oUH9KlrGZ1y7VJg">
+</div>
+</div>
+</div>
+</header>
+<!-- Kanban Area -->
+<div class="flex-1 p-stack-lg overflow-x-auto overflow-y-hidden">
+<div class="flex gap-stack-lg h-full pb-stack-lg">
+<!-- COLUMN: PENDING -->
+<section class="kanban-column flex flex-col h-full bg-surface-container-low/50 rounded-3xl p-stack-md border border-outline-variant">
+<div class="flex justify-between items-center mb-stack-md px-2">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Pending</h2>
+<span class="bg-surface-container-high px-2.5 py-0.5 rounded-full text-label-caps text-on-surface-variant">4</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="more_horiz">more_horiz</span>
+</div>
+<div class="flex-1 overflow-y-auto space-y-stack-md pr-1">
+<!-- Card 1 -->
+<div class="glass-card p-stack-md rounded-2xl border border-outline-variant hover:border-primary-fixed-dim transition-all shadow-sm active:scale-[0.98] cursor-grab">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="text-label-caps px-2 py-1 bg-surface-container rounded-md text-on-surface-variant">CAR • SUV</span>
+<span class="text-body-sm font-code-booking text-outline">#CK-9812</span>
+</div>
+<h3 class="font-code-booking text-headline-md font-bold mb-1">B 1234 ABC</h3>
+<p class="text-body-sm text-on-surface-variant mb-stack-md">Nano Ceramic Coating</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-body-sm text-outline">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>Wait: 15m</span>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center text-[10px] font-bold">JD</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="glass-card p-stack-md rounded-2xl border border-outline-variant hover:border-primary-fixed-dim transition-all shadow-sm active:scale-[0.98] cursor-grab">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="text-label-caps px-2 py-1 bg-surface-container rounded-md text-on-surface-variant">BIKE • SPORT</span>
+<span class="text-body-sm font-code-booking text-outline">#CK-9815</span>
+</div>
+<h3 class="font-code-booking text-headline-md font-bold mb-1">F 4567 XYZ</h3>
+<p class="text-body-sm text-on-surface-variant mb-stack-md">Express Wash + Wax</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-body-sm text-outline">
+<span class="material-symbols-outlined text-sm" data-icon="schedule">schedule</span>
+<span>Wait: 5m</span>
+</div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-white bg-green-100 flex items-center justify-center text-[10px] font-bold">MK</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- COLUMN: IN PROGRESS -->
+<section class="kanban-column flex flex-col h-full bg-primary-fixed/20 rounded-3xl p-stack-md border border-primary-fixed">
+<div class="flex justify-between items-center mb-stack-md px-2">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-headline-md text-primary">In Progress</h2>
+<span class="bg-primary text-white px-2.5 py-0.5 rounded-full text-label-caps">2</span>
+</div>
+<span class="material-symbols-outlined text-primary" data-icon="local_laundry_service">local_laundry_service</span>
+</div>
+<div class="flex-1 overflow-y-auto space-y-stack-md pr-1">
+<!-- In Progress Card 1 -->
+<div class="bg-white p-stack-md rounded-2xl border-2 border-primary transition-all shadow-md relative overflow-hidden">
+<div class="absolute top-0 right-0 p-2">
+<span class="pulse-indicator w-2 h-2 rounded-full bg-success-green block"></span>
+</div>
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="text-label-caps px-2 py-1 bg-primary-container text-white rounded-md">WASHING</span>
+<span class="text-body-sm font-code-booking text-primary font-bold">BAY 02</span>
+</div>
+<h3 class="font-code-booking text-headline-md font-bold mb-1">D 8888 BOSS</h3>
+<p class="text-body-sm text-on-surface-variant mb-stack-md">Full Detail Interior</p>
+<div class="w-full bg-surface-container rounded-full h-1.5 mb-stack-md">
+<div class="bg-primary h-1.5 rounded-full w-2/3"></div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-body-sm text-primary font-bold">
+<span class="material-symbols-outlined text-sm" data-icon="timer">timer</span>
+<span>12:45 left</span>
+</div>
+<button class="bg-surface-container hover:bg-primary-container hover:text-white text-on-surface-variant p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="fast_forward">fast_forward</span>
+</button>
+</div>
+</div>
+<!-- In Progress Card 2 -->
+<div class="bg-white p-stack-md rounded-2xl border border-outline-variant transition-all shadow-sm">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="text-label-caps px-2 py-1 bg-tertiary-container text-white rounded-md">DRYING</span>
+<span class="text-body-sm font-code-booking text-outline">BAY 05</span>
+</div>
+<h3 class="font-code-booking text-headline-md font-bold mb-1">B 2024 TECH</h3>
+<p class="text-body-sm text-on-surface-variant mb-stack-md">Exterior Wash Only</p>
+<div class="w-full bg-surface-container rounded-full h-1.5 mb-stack-md">
+<div class="bg-tertiary-container h-1.5 rounded-full w-4/5"></div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5 text-body-sm text-tertiary font-bold">
+<span class="material-symbols-outlined text-sm" data-icon="timer">timer</span>
+<span>03:10 left</span>
+</div>
+<button class="bg-surface-container hover:bg-tertiary-container hover:text-white text-on-surface-variant p-2 rounded-lg transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="done_all">done_all</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- COLUMN: COMPLETED -->
+<section class="kanban-column flex flex-col h-full bg-surface-container-low/50 rounded-3xl p-stack-md border border-outline-variant">
+<div class="flex justify-between items-center mb-stack-md px-2">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-md text-headline-md text-on-surface">Completed</h2>
+<span class="bg-success-green/10 text-success-green px-2.5 py-0.5 rounded-full text-label-caps">12 Today</span>
+</div>
+<span class="material-symbols-outlined text-success-green" data-icon="verified">verified</span>
+</div>
+<div class="flex-1 overflow-y-auto space-y-stack-md pr-1 opacity-70">
+<!-- Completed Card 1 -->
+<div class="bg-surface-container-lowest p-stack-md rounded-2xl border border-outline-variant grayscale-[0.5] hover:grayscale-0 transition-all cursor-pointer">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="text-label-caps px-2 py-1 bg-success-green/10 text-success-green rounded-md">READY</span>
+<span class="text-body-sm font-code-booking text-outline">#CK-9799</span>
+</div>
+<h3 class="font-code-booking text-headline-md font-bold mb-1">AD 7777 HP</h3>
+<p class="text-body-sm text-on-surface-variant mb-stack-md">Premium Polish + Wax</p>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-outline">Done at 14:20</span>
+<button class="bg-action-yellow text-on-surface font-bold text-label-caps px-4 py-2 rounded-full shadow-sm hover:scale-105 active:scale-95 transition-all">PAY NOW</button>
+</div>
+</div>
+<!-- Completed Card 2 -->
+<div class="bg-surface-container-lowest p-stack-md rounded-2xl border border-outline-variant opacity-60">
+<div class="flex justify-between items-start mb-stack-sm">
+<span class="text-label-caps px-2 py-1 bg-outline-variant text-on-surface-variant rounded-md">PAID</span>
+<span class="text-body-sm font-code-booking text-outline">#CK-9790</span>
+</div>
+<h3 class="font-code-booking text-headline-md font-bold mb-1">B 3321 LL</h3>
+<p class="text-body-sm text-on-surface-variant mb-stack-md">Regular Wash</p>
+<div class="flex items-center justify-between">
+<span class="text-body-sm text-outline">Picked up at 13:45</span>
+<span class="material-symbols-outlined text-success-green" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Add New Column Placeholder -->
+<section class="kanban-column flex flex-col items-center justify-center h-full border-2 border-dashed border-outline-variant rounded-3xl opacity-40 hover:opacity-100 hover:bg-surface-container transition-all cursor-pointer">
+<span class="material-symbols-outlined text-stat-value mb-2" data-icon="add_circle">add_circle</span>
+<span class="font-headline-md">Add Column</span>
+</section>
+</div>
+</div>
+<!-- Dashboard Stats Footer -->
+<footer class="h-20 bg-surface-container-lowest border-t border-outline-variant px-stack-lg flex items-center justify-between shrink-0">
+<div class="flex gap-12">
+<div class="flex flex-col">
+<span class="text-label-caps text-outline">ACTIVE WASHES</span>
+<span class="font-stat-value text-headline-md text-primary">02 <span class="text-body-sm font-normal text-outline">/ 05 Units</span></span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-caps text-outline">DAILY REVENUE</span>
+<span class="font-stat-value text-headline-md text-on-surface">Rp 2.4M <span class="text-success-green text-body-sm font-bold">↑ 12%</span></span>
+</div>
+<div class="flex flex-col">
+<span class="text-label-caps text-outline">AVG. DURATION</span>
+<span class="font-stat-value text-headline-md text-on-surface">28 <span class="text-body-sm font-normal text-outline">mins</span></span>
+</div>
+</div>
+<div class="flex gap-stack-sm">
+<button class="px-6 py-2.5 rounded-full border border-outline text-on-surface font-bold text-body-sm hover:bg-surface-container transition-colors">
+                        Queue Settings
+                    </button>
+<button class="px-6 py-2.5 rounded-full bg-on-surface text-white font-bold text-body-sm hover:opacity-90 transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="print">print</span>
+                        Print Daily Report
+                    </button>
+</div>
+</footer>
+</main>
+</div>
+<!-- Floating Action for Quick QR -->
+<div class="fixed bottom-24 right-8 z-40">
+<button class="w-16 h-16 bg-action-yellow rounded-full shadow-2xl flex items-center justify-center text-on-surface hover:scale-110 active:scale-95 transition-all group">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-12 transition-transform" data-icon="qr_code_scanner">qr_code_scanner</span>
+</button>
+</div>
+<!-- Micro-interaction JS -->
+<script>
+        // Simple drag and drop visual simulation
+        const cards = document.querySelectorAll('.glass-card, .bg-white');
+        cards.forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.95) rotate(-2deg)';
+                card.style.zIndex = '100';
+            });
+            card.addEventListener('mouseup', () => {
+                card.style.transform = '';
+                card.style.zIndex = '';
+            });
+        });
+
+        // Add random time updates to the "In Progress" timers
+        setInterval(() => {
+            const timers = document.querySelectorAll('.timer-val');
+            // This would normally update actual countdowns
+        }, 1000);
+    </script>
+</body></html>
