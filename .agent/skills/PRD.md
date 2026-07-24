@@ -1,4 +1,4 @@
-﻿# PRD — CuciKuy (Sistem Manajemen Cuci Kendaraan)
+# PRD — CuciKuy (Sistem Manajemen Cuci Kendaraan)
 
 > **Versi Dokumen:** 1.0
 > **Tanggal:** 22 Juli 2026
@@ -6,16 +6,16 @@
 
 ---
 
-## Daftar Isi
+## Daftar Isi -> wajib ceklist kalo sudah di kerjakan
 
-1. [ ] [Ringkasan Eksekutif](#1-ringkasan-eksekutif)
-2. [ ] [Tujuan &amp; Ruang Lingkup](#2-tujuan--ruang-lingkup)
-3. [ ] [Tech Stack &amp; Arsitektur](#3-tech-stack--arsitektur)
-4. [ ] [Pengguna &amp; Peran](#4-pengguna--peran)
+1. [X] [Ringkasan Eksekutif](#1-ringkasan-eksekutif)
+2. [X] [Tujuan &amp; Ruang Lingkup](#2-tujuan--ruang-lingkup)
+3. [X] [Tech Stack &amp; Arsitektur](#3-tech-stack--arsitektur)
+4. [X] [Pengguna &amp; Peran](#4-pengguna--peran)
 5. [ ] [Modul A — Aplikasi Customer (Flutter)](#5-modul-a--aplikasi-customer-flutter)
 6. [ ] [Modul B — Aplikasi Kasir/Operator (Web/Mobile)](#6-modul-b--aplikasi-kasiroperator-webmobile)
 7. [ ] [Modul C — Dashboard Admin (FilamentPHP)](#7-modul-c--dashboard-admin-filamentphp)
-8. [ ] [Desain Database (ERD)](#8-desain-database-erd)
+8. [X] [Desain Database (ERD)](#8-desain-database-erd)
 9. [ ] [API Design &amp; Integrasi](#9-api-design--integrasi)
 1. [ ] [Integrasi Payment Gateway](#10-integrasi-payment-gateway)
 1. [ ] [Notifikasi &amp; Real-Time](#11-notifikasi--real-time)
@@ -98,7 +98,14 @@ Sistem memungkinkan pelanggan melakukan booking online, pembayaran digital, dan 
 | **CI/CD**              | GitHub Actions                 | Automated testing & deployment          |
 | **Monitoring**         | Laravel Telescope + Sentry     | Error tracking & performance            |
 
-### 3.2 Arsitektur Sistem
+### 3.2 Arsitektur Sistem (Monolithic MVC + Action Pattern)
+
+Sistem ini dibangun sebagai monolitik yang tangguh dengan memanfaatkan pola bawaan Laravel MVC (Model-View-Controller) yang diperluas dengan **Action Pattern** untuk mengisolasi logika bisnis yang kompleks. Ini **bukan Domain-Driven Design (DDD)**, melainkan pendekatan pragmatis untuk menyederhanakan kode tanpa overhead yang berlebihan.
+
+* **Model & Eloquent:** Menangani representasi data dan hubungan antartabel database.
+* **Controller:** Dibuat setipis mungkin (*Thin Controller*), hanya bertugas menerima HTTP request, melakukan validasi (lewat Form Request), memanggil Action yang relevan, dan mengembalikan response.
+* **Action Classes:** Logika bisnis inti diisolasi dalam kelas-kelas PHP mandiri berorientasi satu tugas (Single Responsibility). Logika bisnis seperti membuat booking, memproses pembayaran, dan mengatur shift diletakkan di sini.
+* **Event & Job Queue:** Untuk tugas-tugas background (kirim WA, email, dll.) agar respon request kasir/customer tetap instan.
 
 ```
 +-----------------------------------------------------------+
@@ -113,18 +120,26 @@ Sistem memungkinkan pelanggan melakukan booking online, pembayaran digital, dan 
           |                 |                 |
           V                 V                 V
 +-----------------------------------------------------------+
-|                      API LAYER                              |
+|                      API & CONTROLLER LAYER                 |
 |                                                             |
 |  +----------------------------------------------------+    |
-|  |              Laravel 11 REST API                     |    |
-|  |  +---------+  +----------+  +---------------+      |    |
-|  |  | Auth    |  | Booking  |  | Payment       |      |    |
-|  |  | Module  |  | Module   |  | Module        |      |    |
-|  |  +---------+  +----------+  +---------------+      |    |
-|  |  +---------+  +----------+  +---------------+      |    |
-|  |  | Order   |  | Report   |  | Notification  |      |    |
-|  |  | Module  |  | Module   |  | Module        |      |    |
-|  |  +---------+  +----------+  +---------------+      |    |
+|  |              Laravel 11 REST API / MVC             |    |
+|  |  Menerima request, validasi input, memetakan route |    |
+|  +----------------------------------------------------+    |
++-----------------------------------------------------------+
+          |                 |                 |
+          V                 V                 V
++-----------------------------------------------------------+
+|                      LOGIC LAYER (ACTIONS)                  |
+|                                                             |
+|  +----------------------------------------------------+    |
+|  |              app/Actions/...                       |    |
+|  |  +------------------+     +---------------------+  |    |
+|  |  | CreateBooking    |     | ProcessPayment      |  |    |
+|  |  +------------------+     +---------------------+  |    |
+|  |  +------------------+     +---------------------+  |    |
+|  |  | AssignShift      |     | CalculatePricing    |  |    |
+|  |  +------------------+     +---------------------+  |    |
 |  +----------------------------------------------------+    |
 |                                                             |
 |  +---------------------+  +--------------------------+     |
@@ -149,48 +164,53 @@ Sistem memungkinkan pelanggan melakukan booking online, pembayaran digital, dan 
 ```
 laravel_cuci_kendaraan/
 +-- app/
-|   +-- Filament/               # FilamentPHP admin resources
+|   +-- Actions/                # Logika Bisnis Utama (Action Pattern)
+|   |   +-- Booking/
+|   |   |   +-- CreateBookingAction.php
+|   |   |   +-- CancelBookingAction.php
+|   |   +-- Payment/
+|   |   |   +-- ProcessPaymentAction.php
+|   |   +-- Employee/
+|   |       +-- AssignShiftAction.php
+|   +-- Enums/                  # Status, tipe data statis, dan role
+|   |   +-- BookingStatus.php
+|   |   +-- PaymentStatus.php
+|   |   +-- UserRole.php
+|   +-- Filament/               # Admin panel (FilamentPHP 3+)
 |   |   +-- Resources/
 |   |   +-- Pages/
 |   |   +-- Widgets/
 |   +-- Http/
-|   |   +-- Controllers/        # API Controllers
+|   |   +-- Controllers/        # Controllers tipis (Inertia & API)
 |   |   +-- Middleware/
-|   |   +-- Requests/           # Form Request validation
-|   +-- Models/                 # Eloquent Models
-|   +-- Services/               # Business logic layer
-|   |   +-- BookingService.php
-|   |   +-- PaymentService.php
-|   |   +-- SlotService.php
-|   |   +-- ReportService.php
-|   |   +-- NotificationService.php
-|   +-- Jobs/                   # Queue jobs
-|   +-- Events/                 # Broadcasting events
+|   |   +-- Requests/           # Form Request validations
+|   +-- Models/                 # Eloquent Models (Database tables)
+|   +-- Services/               # Integrasi eksternal (WA, Payment Gateway)
+|   |   +-- WhatsAppService.php
+|   |   +-- PaymentGatewayService.php
+|   +-- Jobs/                   # Queue jobs asinkronus
+|   +-- Events/                 # Real-time WebSocket events
 |   +-- Listeners/              # Event listeners
-|   +-- Notifications/          # Notification classes
-|   +-- Enums/                  # PHP 8.2 Enums
+|   +-- Notifications/          # Email / In-app notifications
 +-- database/
-|   +-- migrations/
-|   +-- seeders/
+|   +-- migrations/             # Skema database
+|   +-- seeders/                # Dummy data & initial settings
 |   +-- factories/
 +-- routes/
-|   +-- api.php                 # API routes (Flutter)
-|   +-- web.php                 # Web routes (Kasir + Admin)
-|   +-- channels.php            # Broadcast channels
+|   +-- api.php                 # API endpoints (Flutter Customer)
+|   +-- web.php                 # Web routes (Kasir Inertia + Admin)
+|   +-- channels.php            # WebSocket channels
 +-- resources/
-|   +-- js/                     # Inertia.js React components
+|   +-- js/                     # Frontend Kasir (Inertia.js + React)
 |       +-- Pages/
 |       +-- Components/
 |       +-- Layouts/
 +-- config/
-+-- docker/                     # Docker configurations
-+-- .github/                    # CI/CD workflows
-+-- mobile/                     # Flutter app (separate)
-|   +-- cuci_kuy_app/
-+-- tests/
-|   +-- Unit/
-|   +-- Feature/
-+-- docs/                       # Documentation
++-- docker/
++-- .github/
++-- mobile/                     # Aplikasi Flutter (Customer)
++-- tests/                      # Unit & Feature Testing
++-- docs/                       # Dokumentasi tambahan
 ```
 
 ---
@@ -687,7 +707,7 @@ Login -> Dashboard Hari Ini -> Scan / Cari -> Proses Transaksi
 - Lihat workload karyawan per hari.
 - Komisi otomatis berdasarkan jumlah pencucian.
 
-#### 7.2.6 Manajemen Pelanggan
+#### 7.2.6 Manajemen Pelanggan ✅ **SELESAI**
 
 **Resource: Customer**
 
@@ -706,12 +726,12 @@ Login -> Dashboard Hari Ini -> Scan / Cari -> Proses Transaksi
 
 **Fitur:**
 
-- Lihat daftar customer dengan pencarian & filter.
-- Detail customer: Riwayat booking, total spending.
-- Assign tier loyalty (otomatis berdasarkan spending).
-- Catatan khusus per customer.
-- Export data customer (CSV/Excel).
-- Blokir customer (jika bermasalah).
+- [X] Lihat daftar customer dengan pencarian & filter.
+- [X] Detail customer: Riwayat booking, total spending.
+- [X] Assign tier loyalty (otomatis berdasarkan spending).
+- [X] Catatan khusus per customer.
+- [X] Export data customer (CSV/Excel).
+- [X] Blokir customer (jika bermasalah).
 
 #### 7.2.7 Manajemen Booking
 
@@ -1724,3 +1744,759 @@ Echo.private(`booking.${bookingId}`)
 >
 > **Author:** Product Team
 > **Last Updated:** 22 Juli 2026
+
+---
+
+## 17. UI/UX Design Reference — Stitch Screens
+
+> **Design System:** Hydro-Tech Kinetic
+> **Folder:** `stitch_cucikuy_laundry_management/`
+> **Aturan:** Setiap halaman yang dibangun WAJIB mengikuti tampilan dan design system dari screenshot berikut. Jangan membuat desain baru dari nol — selalu rujuk ke file `screen.png` dan `code.html` di masing-masing subfolder.
+
+### 17.1 Design System (Hydro-Tech Kinetic)
+
+**File referensi:** `stitch_cucikuy_laundry_management/hydro_tech_kinetic/DESIGN.md`
+
+| Token                   | Nilai                                   |
+| ----------------------- | --------------------------------------- |
+| Primary                 | `#003EC7` (Blue)                      |
+| Primary Container       | `#0052FF`                             |
+| Surface Background      | `#F8FAFC`                             |
+| On-Surface              | `#0B1C30`                             |
+| Success Green           | `#10B981`                             |
+| Warning Yellow          | `#FBBF24` / Action Yellow `#FFD600` |
+| Error Red               | `#EF4444`                             |
+| Safety Orange           | `#FF6B00` (untuk CTA "In Progress")   |
+| Font Headline           | Montserrat (700)                        |
+| Font Body/UI            | Inter (400/500)                         |
+| Font Kode/Plat          | JetBrains Mono                          |
+| Border Radius Card      | 8px (0.5rem)                            |
+| Border Radius Widget    | 16px (1rem)                             |
+| Shadow (elevated)       | `0px 4px 12px rgba(0, 82, 255, 0.08)` |
+| Sidebar Width (Desktop) | 280px fixed                             |
+| Max Content Width       | 1440px                                  |
+
+**Prinsip utama:**
+
+- Light mode default dengan background `#F8FAFC`
+- Sidebar kiri fixed (280px) + konten utama fleksibel
+- Semua status badge pakai uppercase `label-caps` dengan pill shape
+- Plat nomor kendaraan SELALU menggunakan font JetBrains Mono
+- Shadow card berwarna biru transparan, bukan abu-abu
+
+---
+
+### 17.2 Mapping Fitur → Screen Reference
+
+| #  | Fitur / Halaman                                                                      | Modul PRD           | Subfolder Stitch               | File                          |
+| -- | ------------------------------------------------------------------------------------ | ------------------- | ------------------------------ | ----------------------------- |
+| 1  | Dashboard Kasir (Performance Overview, Stat Cards, Recent Bookings, Live Occupancy)  | §6.3.2, §7.2.1    | `dashboard_kasir_cucikuy/`   | `screen.png`, `code.html` |
+| 2  | Antrian Kanban (Pending → In Progress → Completed)                                 | §6.3.2, §6.3.5    | `manajemen_antrian_kanban/`  | `screen.png`, `code.html` |
+| 3  | Booking Walk-in Baru (Customer Info, Vehicle Spec, Service Selection, Order Summary) | §6.3.4             | `booking_walk_in_baru/`      | `screen.png`, `code.html` |
+| 4  | Checkout & Struk (Metode Pembayaran, Split Payment, Print Preview)                   | §6.3.6, §10.3     | `checkout_struk/`            | `screen.png`, `code.html` |
+| 5  | Detail Pelanggan (Registered Customers, Profile, Transaction History)                | §7.2.6             | `detail_pelanggan/`          | `screen.png`, `code.html` |
+| 6  | Hak Akses & Role Karyawan (Daftar Role, Izin per Role)                               | §4.2, §12.2       | `hak_akses_role_karyawan/`   | `screen.png`, `code.html` |
+| 7  | Laporan Keuangan Cabang (Revenue Trend, Service Split, Recent Transactions)          | §7.2.8             | `laporan_keuangan_cabang/`   | `screen.png`, `code.html` |
+| 8  | Manajemen Karyawan & Shift (Weekly Schedule, Commission Rates, Add Employee)         | §7.2.5             | `manajemen_karyawan_shift/`  | `screen.png`, `code.html` |
+| 9  | Manajemen Layanan & Harga (Service Catalog, Add-ons, Pricing Health)                 | §7.2.3             | `manajemen_layanan_harga/`   | `screen.png`, `code.html` |
+| 10 | Manajemen Stok & COGS (Item List, Usage Over Time, Priority Suppliers)               | — (fitur tambahan) | `manajemen_stok_cogs/`       | `screen.png`, `code.html` |
+| 11 | Pengaturan Global (General Info, Payment Gateway, Operational Hours, Tax)            | §7.2.10            | `pengaturan_global_setting/` | `screen.png`, `code.html` |
+| 12 | Pengaturan Slot & Kuota (Kalender, Daily Max Capacity, Hourly Capacity)              | §7.2.4             | `pengaturan_slot_kuota/`     | `screen.png`, `code.html` |
+
+---
+
+### 17.3 Detail Setiap Screen
+
+#### 1. Dashboard Kasir (`dashboard_kasir_cucikuy/`)
+
+**Tampilan:** Sidebar kiri (Dashboard, Queue, Bookings, Employees, Reports) + area konten.**Komponen utama:**
+
+- Header: Branch name + Search bar + Notifikasi + Branch Status (● Open)
+- **4 Stat Cards:** Total Bookings, Daily Revenue (Rp), Active Queue (X/Y), Avg. Wash Time
+- **Recent Bookings table:** Customer/Vehicle | License Plate | Service | Status badge | Price
+- **Sidebar kanan:** Live Occupancy bar chart + Live Status feed per bay
+- **2 CTA button:** "Scan QR" (kuning/orange) + "New Walk-in" (biru gelap)
+- Status badge: FINISHED (hijau outline), IN PROGRESS (biru fill), WAITING (oranye)
+
+**Penting:** License plate SELALU JetBrains Mono. Stat card nilai menggunakan font `stat-value` (Montserrat 36px 700).
+
+---
+
+#### 2. Antrian Kanban (`manajemen_antrian_kanban/`)
+
+**Tampilan:** 3 kolom kanban — Pending | In Progress | Completed.**Komponen utama:**
+
+- Kolom **Pending:** Card berisi badge vehicle type (CAR•SUV, BIKE•SPORT), booking code (#CK-XXXX), plat nomor (JetBrains Mono), nama layanan, wait time, avatar operator
+- Kolom **In Progress:** Card dengan border biru (WASHING) atau oranye (DRYING), bay number, progress bar, countdown timer merah jika hampir habis
+- Kolom **Completed:** Card minimal dengan status READY/PAID + tombol "PAY NOW"
+- **Footer bar:** Active Washes, Daily Revenue, Avg. Duration + tombol Queue Settings & Print Daily Report
+- **FAB:** Tombol bulat kuning "Scan QR" di pojok kanan bawah
+
+---
+
+#### 3. Booking Walk-in Baru (`booking_walk_in_baru/`)
+
+**Tampilan:** Form 2-panel — kiri (form input) + kanan (Order Summary).**Komponen utama:**
+
+- **Section Customer Information:** Full Name + Phone Number input
+- **Section Vehicle Specification:** Icon grid pilihan vehicle type (SEDAN, SUV/MPV, PICKUP, MOTOR) + License Plate input (JetBrains Mono, format "B 1234 XYZ")
+- **Section Service Selection:** List card per layanan (icon + nama + deskripsi + harga + durasi)
+- **Order Summary (sticky kanan):** Breakdown harga + Total Amount (besar, biru) + Payment Method toggle (CASH aktif / QRIS) + tombol "CONFIRM BOOKING" (biru penuh) + "Discard Draft" (merah teks)
+- Info box: "Auto-apply loyalty discount for returning members"
+
+---
+
+#### 4. Checkout & Struk (`checkout_struk/`)
+
+**Tampilan:** 2-panel — kiri (metode bayar + print preview) + kanan (order summary).**Komponen utama:**
+
+- **Metode Pembayaran:** 3 pilihan (Cash, QRIS, Transfer Bank) sebagai card besar dengan icon
+- **Split Payment:** Toggle switch + 2 input amount
+- **Print Preview:** Preview struk thermal dengan informasi cabang, tanggal, order ID, kasir, detail layanan, subtotal, tax, TOTAL — tagline "Mobil Bersih, Hati Senang." + QR code feedback
+- **Order Summary kanan:** License plate chip (JetBrains Mono) + breakdown services + Grand Total besar biru
+- **CTA:** "Cetak Struk & Selesai" (biru, full-width, dengan ikon printer)
+
+---
+
+#### 5. Detail Pelanggan (`detail_pelanggan/`)
+
+**Tampilan:** 2-panel — kiri (daftar customer) + kanan (detail profil & history).**Komponen utama:**
+
+- **List kiri:** Avatar initial + Nama + vehicle plate + loyalty tier badge (GOLD, SILVER, BRONZE)
+- **Detail kanan atas:** Foto profil + Nama (besar biru) + Phone + Email + vehicle plates chips + Preferred Branch card (biru solid) + Total Visits number
+- **4 Metric cards:** Total Spend, Reward Points, Avg. Duration, Satisfaction (rating)
+- **Transaction History table:** Date | Service | Vehicle | Branch | Amount | Status (COMPLETED hijau)
+
+---
+
+#### 6. Hak Akses & Role Karyawan (`hak_akses_role_karyawan/`)
+
+**Tampilan:** 2-panel — kiri (Daftar Role) + kanan (konfigurasi izin).**Komponen utama:**
+
+- **List Role kiri:** Card per role (Kasir, Supervisor, Teknisi, Admin Cabang) + jumlah personel + ikon edit
+- **Card bawah kiri:** Total Karyawan (angka besar putih di background biru)
+- **Panel kanan (Izin Role):** Header role + status AKTIF badge + grid 2×N checkbox izin per kategori (Operasional & Transaksi, Inventory & Reporting)
+- **Info Box:** Warning keamanan (background kuning) untuk aksi berisiko
+- **Footer:** Reset Default + Batal + Simpan Perubahan
+
+---
+
+#### 7. Laporan Keuangan Cabang (`laporan_keuangan_cabang/`)
+
+**Tampilan:** Header filter + 4 Stat Cards + 2 chart panel.**Komponen utama:**
+
+- **Filter bar:** Date Range dropdown + Service Category dropdown + Export PDF button (biru gelap)
+- **4 Stat Cards:** Total Revenue, Total Transactions, Unpaid Amount (merah), Avg. Ticket Size
+- **Revenue Trend chart:** Line chart harian (Mon-Sun) dengan toggle Revenue/Volume
+- **Service Split panel kanan:** Progress bar horizontal per jenis layanan (%) + Pro-Tip insight box
+- **Recent Transactions table:** TRX ID (link biru) | Vehicle/Customer | Service | Amount | Status (PAID/UNPAID badge) | Date & Time | Actions (titik tiga)
+
+---
+
+#### 8. Manajemen Karyawan & Shift (`manajemen_karyawan_shift/`)
+
+**Tampilan:** 2-panel — kiri (weekly schedule grid + commission table) + kanan (form Add Employee).**Komponen utama:**
+
+- **4 Stat Cards:** Total Force, On Shift Now (X/Y), Today's Commissions, Performance Score (biru bold)
+- **Weekly Shift Schedule:** Grid karyawan × hari, setiap cell = jam shift (08-16, 16-00) dengan warna berbeda per shift, highlight hari ini (biru), OFF = abu-abu
+- **Commission Rates table:** Employee | Position badge | Base Commission % | Weekly Sales | Edit/Delete
+- **Form kanan:** Full Name + Position dropdown + Branch dropdown + Salary Type radio (Weekly/Monthly) + Commission Rate slider + Base Salary input + Profile Picture upload + Save button
+
+---
+
+#### 9. Manajemen Layanan & Harga (`manajemen_layanan_harga/`)
+
+**Tampilan:** Konten full dengan header stats + tabel + sidebar kanan.**Komponen utama:**
+
+- **Header:** "Services & Pricing" + Export CSV + Create New Service (biru)
+- **4 Stat Cards:** Active Services, Avg. Margin %, Active Add-ons, Price Rules
+- **Service Catalog table:** Service icon + nama + deskripsi | Type badge (WASH hijau, PREMIUM oranye, SPECIALIST kuning) | Base Pricing (biru, JetBrains Mono style) | Duration | Actions
+- **Add-ons panel kanan:** Checkbox list add-on dengan harga
+- **Pricing Health panel:** Market Alignment progress bar + Peak Hour Surcharge indicator
+
+---
+
+#### 10. Manajemen Stok & COGS (`manajemen_stok_cogs/`)
+
+**Tampilan:** Tabel stok + sidebar analytics.**Komponen utama:**
+
+- **Header:** "Manajemen Stok & COGS" + Search inventory
+- **Tabel:** Item icon + Nama | Category | Current Stock badge (Safe/Low/Critical) | Unit | Unit Cost
+- **Sidebar kanan:** Total Inventory Value card (biru bold) + Usage Over Time bar chart (7 hari) + Insight text + Priority Suppliers list
+- **FAB:** "Tambah Barang Baru" (biru, kanan bawah)
+
+> **Catatan PRD:** Fitur Stok & COGS adalah **fitur tambahan** yang tidak tercakup dalam PRD v1.0 (Out-of-Scope). Tampilan ini disiapkan untuk v2.
+
+---
+
+#### 11. Pengaturan Global (`pengaturan_global_setting/`)
+
+**Tampilan:** 2-panel — kiri (navigasi kategori setting) + kanan (form konten).**Komponen utama:**
+
+- **Navigasi kiri:** General Info (aktif, biru), Payment Gateway, Operational Hours, Tax & Billing — masing-masing sebagai tombol pill
+- **Form kanan (General Info):** Branch Name + Store ID (readonly, JetBrains Mono style) + Physical Address textarea + Contact Phone + Support Email
+- **Footer form:** "All changes are synced locally" (hijau) + Discard + Save Global Changes
+
+---
+
+#### 12. Pengaturan Slot & Kuota (`pengaturan_slot_kuota/`)
+
+**Tampilan:** Kalender besar + sidebar konfigurasi.**Komponen utama:**
+
+- **3 Stat Cards:** Active Capacity (%), Blocked Dates (count), Peak Efficiency (cars serviced)
+- **Kalender bulanan/mingguan:** Tanggal dengan indicator slot (e.g., "12/30 Slots" bar hijau/kuning), tanggal BLOCKED dengan hatching merah
+- **Slot Settings panel kanan:** Target Date picker + Daily Max Capacity slider + Block Date button + Reset All + Update Configuration (biru)
+- **Hourly Capacity list:** Jam 08:00–12:00 dengan pill bar kapasitas (X/Y cars, FULL = merah, Maintenance-Offline = italic merah)
+- **Footer:** Shift label + LIVE FEED badge hijau
+
+---
+
+### 17.4 Panduan Implementasi UI
+
+#### Navigasi Sidebar
+
+Semua halaman kasir/admin menggunakan sidebar kiri lebar **280px** dengan:
+
+- Logo "CuciKuy" bold biru di atas + subtitle "Admin Management"
+- Menu items: Dashboard, Queue, Bookings, Employees, Reports (+ Settings jika role admin)
+- Menu aktif: background `surface-container` (biru sangat muda) + teks biru
+- **Tombol "+ New Booking"** selalu di bawah sidebar (biru solid, full-width, rounded-full)
+- Avatar + nama + branch di paling bawah sidebar
+
+#### Header Halaman
+
+- Breadcrumb atau judul halaman (Montserrat, 24–32px, 700)
+- Search bar di tengah/kiri
+- Kanan: Notifikasi bell + Help icon + User avatar + Branch name / User info
+
+#### Status Badge
+
+| Status                      | Warna                     | Style                   |
+| --------------------------- | ------------------------- | ----------------------- |
+| FINISHED / COMPLETED / PAID | Hijau (#10B981)           | Outline atau fill tipis |
+| IN PROGRESS / WASHING       | Biru (#003EC7)            | Fill penuh              |
+| DRYING                      | Oranye (#863500/Tertiary) | Fill penuh              |
+| WAITING / PENDING           | Oranye muda               | Outline                 |
+| UNPAID                      | Kuning-oranye (#FBBF24)   | Fill                    |
+| CANCELLED / CRITICAL        | Merah (#EF4444)           | Fill                    |
+
+#### Typography Hierarchy
+
+| Elemen              | Font           | Size     | Weight         |
+| ------------------- | -------------- | -------- | -------------- |
+| Page Title          | Montserrat     | 32px     | 700            |
+| Section Title       | Montserrat     | 20px     | 600            |
+| Stat Value          | Montserrat     | 36px     | 700            |
+| Body Text           | Inter          | 14–16px | 400            |
+| Label/Badge         | Inter          | 12px     | 700, UPPERCASE |
+| Kode Booking / Plat | JetBrains Mono | 16px     | 500            |
+
+#### Komponen Berulang
+
+- **Kanban Card:** Rounded-lg (16px), border kiri berwarna sesuai status, shadow biru transparan
+- **Stat Card:** Padding 24px, label kecil di atas, nilai besar di bawah, trend indicator (+X% hijau / -X% merah)
+- **Form Input:** Border `1px solid #E2E8F0`, radius 8px, focus border biru
+- **Primary Button:** Background `#003EC7`, teks putih, radius `rounded-full` atau `rounded-xl`
+- **Secondary Button:** Border `1px solid #003EC7`, teks biru, background putih
+- **Destructive:** Teks merah (#EF4444), tanpa border (ghost)
+
+---
+
+## 18. Checklist Pengerjaan Bertahap
+
+> Kerjakan dari atas ke bawah. Tandai `[x]` jika selesai. Setiap item sudah diurutkan berdasarkan dependensi — jangan skip urutan.
+
+---
+
+### ✅ PHASE 1 — Foundation & Setup (Minggu 1–3)
+
+#### 1.1 Setup Proyek Laravel
+
+- [X] Buat project Laravel 11 baru (`laravel new cucikuy`)
+- [X] Setup Docker + Docker Compose (PHP 8.2, MySQL 8, Redis, Nginx)
+- [X] Konfigurasi `.env` (DB, Redis, Mail, Queue)
+- [X] Install package: FilamentPHP 3, Sanctum, Horizon, Reverb
+- [X] Setup GitHub Actions CI/CD (test + deploy pipeline)
+- [X] Setup Laravel Telescope (dev) + Sentry (production)
+
+#### 1.2 Database Migration
+
+- [X] Migration: `users`
+- [X] Migration: `user_roles`
+- [X] Migration: `branches`
+- [X] Migration: `services`
+- [X] Migration: `service_pricings`
+- [X] Migration: `add_ons`
+- [X] Migration: `slot_configurations`
+- [X] Migration: `employees`
+- [X] Migration: `shifts`
+- [X] Migration: `customers`
+- [X] Migration: `bookings`
+- [X] Migration: `booking_add_ons`
+- [X] Migration: `booking_status_logs`
+- [X] Migration: `payments`
+- [X] Migration: `promos` + `promo_usages`
+- [X] Migration: `notifications_log`
+- [X] Migration: `activity_logs`
+- [X] Migration: `settings`
+- [X] Buat semua index performance (lihat §8.3 PRD)
+- [X] Buat Seeder: dummy data cabang, layanan, harga, karyawan, customer
+
+#### 1.3 Autentikasi & RBAC
+
+- [X] Setup Laravel Sanctum untuk API (Flutter)
+- [X] Buat middleware `CheckRole` untuk RBAC (super_admin, admin_branch, cashier, operator)
+- [X] Buat middleware `BranchScope` untuk membatasi akses data per cabang
+- [X] Buat Policy classes: BookingPolicy, EmployeePolicy, ReportPolicy
+- [X] Buat Form Request validation untuk semua input endpoint auth
+- [ ] Test: login customer (token), login kasir (session), login admin (filament)
+
+#### 1.4 Enums PHP 8.2
+
+- [X] `BookingStatus` (pending_payment, confirmed, in_queue, washing, drying, completed, cancelled, no_show)
+- [X] `PaymentMethod` (qris, gopay, ovo, dana, shopeepay, va_bca, va_bri, va_mandiri, va_bni, credit_card, cash)
+- [X] `PaymentStatus` (unpaid, paid, refund_pending, refunded)
+- [X] `VehicleType` (sedan, suv, mpv, hatchback, motor, truck)
+- [X] `UserRole` (super_admin, admin_branch, cashier, operator)
+- [X] `ServiceCategory` (basic, premium, premium_plus, on_demand)
+- [X] `EmployeePosition` (cashier, washer, supervisor)
+- [X] `SalaryType` (monthly, per_wash, hourly)
+- [X] `ShiftStatus` (scheduled, active, completed, absent)
+- [X] `LoyaltyTier` (bronze, silver, gold, platinum)
+- [X] `PaymentGateway` (midtrans, xendit, manual)
+- [X] `NotificationType` (email, push, sms, in_app)
+
+---
+
+### ✅ PHASE 2 — Admin Dashboard FilamentPHP (Minggu 2–3)
+
+> Referensi tampilan: lihat screen di `stitch_cucikuy_laundry_management/`
+
+#### 2.1 Setup FilamentPHP
+
+- [X] Install dan konfigurasi FilamentPHP 3
+- [X] Buat custom theme sesuai design system Hydro-Tech Kinetic (primary: #003EC7)
+- [X] Daftarkan font Montserrat + Inter + JetBrains Mono di Filament
+- [X] Konfigurasi sidebar navigation (Dashboard, Queue, Bookings, Employees, Reports, Settings)
+
+#### 2.2 Resource: Branch (Cabang)
+
+- [X] CRUD Filament resource Branch
+- [X] Form: nama, slug, alamat, kota, provinsi, GPS koordinat, jam operasional (JSON), foto cover
+- [X] Toggle aktif/nonaktif
+- [X] Tampilkan statistik singkat per cabang
+
+#### 2.3 Resource: Service & Pricing
+
+> Screen ref: `manajemen_layanan_harga/screen.png`
+
+- [X] CRUD resource Service (nama, deskripsi, kategori, durasi, gambar, sort_order)
+- [X] CRUD resource ServicePricing (harga per kombinasi layanan × cabang × jenis kendaraan)
+- [X] CRUD resource AddOn (nama, harga, durasi tambahan)
+- [X] Tampilkan stat: Active Services, Avg. Margin, Active Add-ons, Price Rules
+- [X] Tampilkan badge type (WASH hijau, PREMIUM oranye, SPECIALIST kuning)
+- [X] Panel Pricing Health (Market Alignment + Peak Hour Surcharge)
+
+#### 2.4 Resource: SlotConfiguration
+
+> Screen ref: `pengaturan_slot_kuota/screen.png`
+
+- [X] CRUD slot per hari per cabang
+- [X] Support recurring slot (day_of_week) + spesifik (date)
+- [X] Kalender view (bulan/minggu) dengan indicator kapasitas (X/Y Slots bar)
+- [X] Tandai tanggal BLOCKED dengan hatching merah
+- [X] Panel kanan: Target Date picker + Daily Max Capacity slider + Block Date / Reset All
+- [X] Hourly Capacity list (08:00–17:00) dengan status per slot
+
+#### 2.5 Resource: Employee & Shift
+
+> Screen ref: `manajemen_karyawan_shift/screen.png`
+
+- [X] CRUD Employee (nama, posisi, cabang, salary type, commission rate, foto)
+- [X] Weekly Shift Schedule grid (karyawan × hari, highlight hari ini biru)
+- [X] Commission Rates & Performance table
+- [X] Form Add Employee di panel samping (inline)
+- [X] Stat cards: Total Force, On Shift Now, Today's Commissions, Performance Score
+
+#### 2.6 Resource: Customer
+
+> Screen ref: `detail_pelanggan/screen.png`
+
+- [X] List customer dengan avatar initial + nama + plat + loyalty tier badge
+- [X] Detail panel: foto, info kontak, plat kendaraan, preferred branch, total visits
+- [X] 4 metric cards: Total Spend, Reward Points, Avg. Duration, Satisfaction
+- [X] Transaction History table per customer
+- [X] Export CSV/Excel
+- [X] Fitur blokir customer
+
+#### 2.7 Resource: Booking (Admin)
+
+- [X] List semua booking dengan filter: tanggal, status, cabang, layanan
+- [X] Detail booking: info customer, kendaraan, layanan, pembayaran, timeline status, foto
+- [X] Override status manual
+- [X] Cancel booking + alasan
+- [X] Reschedule booking
+- [X] Assign ulang operator
+
+#### 2.8 Hak Akses & Role
+
+> Screen ref: `hak_akses_role_karyawan/screen.png`
+
+- [ ] Halaman Daftar Role (Kasir, Supervisor, Teknisi, Admin Cabang) + jumlah personel
+- [ ] Panel konfigurasi izin per role (checkbox grid: Buat Booking, Edit Harga, Update Status, dst)
+- [ ] Warning box untuk aksi berisiko (Hapus Transaksi)
+- [ ] Tombol Reset Default + Simpan Perubahan
+
+#### 2.9 Pengaturan Global
+
+> Screen ref: `pengaturan_global_setting/screen.png`
+
+- [ ] Tab navigasi: General Info, Payment Gateway, Operational Hours, Tax & Billing
+- [ ] Form General Info: Branch Name, Store ID (readonly), Alamat, Phone, Email
+- [ ] Form Payment Gateway: Midtrans (server key, client key, env) + Xendit (API key)
+- [ ] Form Operational Hours per hari
+- [ ] Form Tax & Billing: tax_rate, booking_cutoff_hours, payment_expired_minutes, dll
+- [ ] Semua setting key dari tabel §7.2.10 PRD
+
+#### 2.10 Dashboard Admin
+
+> Screen ref: `dashboard_kasir_cucikuy/screen.png`
+
+- [ ] 4 Stat Cards (Total Bookings, Daily Revenue, Active Queue X/Y, Avg. Wash Time)
+- [ ] Tombol "Scan QR" (kuning/oranye) + "New Walk-in" (biru gelap) di header
+- [ ] Recent Bookings table (Customer/Vehicle, License Plate JetBrains Mono, Service, Status badge, Price)
+- [ ] Live Occupancy bar chart (sidebar kanan)
+- [ ] Live Status feed per bay
+- [ ] Line chart pendapatan 7 hari terakhir
+- [ ] Doughnut chart booking per layanan
+- [ ] Bar chart booking per jam
+
+---
+
+### ✅ PHASE 3 — API Backend untuk Flutter (Minggu 4–5)
+
+#### 3.1 Auth API
+
+- [ ] `POST /api/v1/auth/register` + Form Request validation
+- [ ] `POST /api/v1/auth/login` — return Sanctum token
+- [ ] `POST /api/v1/auth/logout` — revoke token
+- [ ] `POST /api/v1/auth/forgot-password`
+- [ ] `POST /api/v1/auth/reset-password`
+- [ ] `POST /api/v1/auth/verify-otp`
+- [ ] `POST /api/v1/auth/social-login` (Google/Apple)
+- [ ] `GET/PUT /api/v1/auth/me`
+
+#### 3.2 Branch API
+
+- [ ] `GET /api/v1/branches` — list + filter lokasi (lat/lng radius)
+- [ ] `GET /api/v1/branches/{id}` — detail + jam operasional
+- [ ] `GET /api/v1/branches/{id}/services` — layanan aktif + pricing
+- [ ] `GET /api/v1/branches/{id}/slots?date=YYYY-MM-DD` — slot tersedia
+
+#### 3.3 Booking API
+
+- [ ] `POST /api/v1/bookings` — buat booking, generate booking_code (CK-YYYYMMDD-NNN)
+- [ ] `GET /api/v1/bookings` — riwayat customer (dengan pagination)
+- [ ] `GET /api/v1/bookings/{id}` — detail booking
+- [ ] `PUT /api/v1/bookings/{id}/cancel` — cancel + alasan
+- [ ] `GET /api/v1/bookings/{code}/track` — tracking by booking code (public)
+- [ ] `POST /api/v1/bookings/{id}/review` — rating 1-5 + komentar + foto
+
+#### 3.4 Payment API
+
+- [ ] `POST /api/v1/payments` — initiate Midtrans Snap, return snap_token
+- [ ] `GET /api/v1/payments/{id}/status` — cek status
+- [ ] `POST /api/v1/payments/callback` — webhook Midtrans (verifikasi signature)
+- [ ] `POST /api/v1/payments/{id}/retry` — retry expired payment
+- [ ] Implementasi `PaymentService::createTransaction()` (lihat §10.1 PRD)
+- [ ] Implementasi `PaymentService::handleWebhook()` + fire `BookingConfirmed` event
+
+#### 3.5 Services & Promos API
+
+- [ ] `GET /api/v1/services` + `GET /api/v1/services/{id}`
+- [ ] `POST /api/v1/promos/apply` — validasi kode promo + hitung diskon
+- [ ] `GET /api/v1/promos/available` — promo aktif untuk customer
+
+#### 3.6 Slot Availability Logic
+
+- [ ] `SlotService::getAvailableSlots(branch, date)` — query slot_configurations, kurangi booked count
+- [ ] Logic cut-off time (min 2 jam sebelum slot)
+- [ ] Color indicator: Tersedia (< 50% penuh), Hampir Penuh (50–90%), Penuh (100%)
+- [ ] Caching slot availability di Redis (TTL 60 detik)
+- [ ] Handle concurrent booking (database-level locking / optimistic concurrency)
+
+#### 3.7 Notifications API
+
+- [ ] `GET /api/v1/notifications` — list notifikasi customer
+- [ ] `PUT /api/v1/notifications/{id}/read` + `PUT /api/v1/notifications/read-all`
+- [ ] `POST /api/v1/notifications/fcm-token` — simpan/update FCM token device
+
+---
+
+### ✅ PHASE 4 — Kasir Web (Inertia.js + React) (Minggu 5–6)
+
+> Semua UI mengacu pada screen stitch. Wajib pakai Tailwind CSS + Shadcn/ui.
+
+#### 4.1 Setup
+
+- [ ] Install Inertia.js + React + Vite di Laravel
+- [ ] Install Tailwind CSS + Shadcn/ui
+- [ ] Daftarkan font Montserrat + Inter + JetBrains Mono
+- [ ] Setup layout utama: sidebar 280px + area konten + tombol "+ New Booking"
+
+#### 4.2 Halaman Dashboard Kasir
+
+> Screen ref: `dashboard_kasir_cucikuy/screen.png`
+
+- [ ] Sidebar navigasi (Dashboard aktif = bg biru muda)
+- [ ] Header: nama cabang + search bar + notif + Branch Status badge
+- [ ] 4 Stat Cards dengan trend indicator
+- [ ] Tabel Recent Bookings (license plate JetBrains Mono, status badge berwarna)
+- [ ] Panel kanan: Bay Utilization chart + Live Status feed
+- [ ] Tombol "Scan QR" (kuning) + "New Walk-in" (biru gelap)
+
+#### 4.3 Halaman Antrian Kanban
+
+> Screen ref: `manajemen_antrian_kanban/screen.png`
+
+- [ ] Layout 3 kolom: Pending | In Progress | Completed
+- [ ] Card kanban: vehicle type badge, booking code, plat JetBrains Mono, service name, wait time, operator avatar
+- [ ] Card In Progress: border biru (WASHING) / oranye (DRYING), progress bar, countdown timer
+- [ ] Card Completed: status READY/PAID + tombol "PAY NOW"
+- [ ] FAB tombol "Scan QR" bulat kuning di pojok kanan bawah
+- [ ] Footer bar statistik hari ini
+- [ ] Real-time update via Laravel Reverb (WebSocket)
+
+#### 4.4 Halaman Walk-in Booking Baru
+
+> Screen ref: `booking_walk_in_baru/screen.png`
+
+- [ ] Form Customer Information (nama + no HP)
+- [ ] Vehicle Specification: icon grid pilihan tipe + license plate input (JetBrains Mono, uppercase)
+- [ ] Service Selection: card list per layanan dengan ikon + harga + durasi
+- [ ] Order Summary sticky (kanan): breakdown + Total (Montserrat besar biru) + Payment toggle (Cash/QRIS)
+- [ ] Tombol "CONFIRM BOOKING" + "Discard Draft"
+- [ ] Auto-apply loyalty discount untuk returning member
+
+#### 4.5 Halaman Checkout & Struk
+
+> Screen ref: `checkout_struk/screen.png`
+
+- [ ] 3 metode bayar: Cash, QRIS, Transfer Bank (card besar dengan icon)
+- [ ] Toggle Split Payment + 2 input amount
+- [ ] Print Preview struk thermal (80mm) dengan nama cabang, order ID, kasir, detail layanan, tax, TOTAL, QR feedback
+- [ ] Order Summary kanan: license plate chip + breakdown + Grand Total biru
+- [ ] Tombol "Cetak Struk & Selesai" dengan ikon printer
+
+#### 4.6 Halaman Scan QR
+
+- [ ] Integrasi `html5-qrcode` library
+- [ ] Tampilkan detail booking setelah scan (nama, layanan, kendaraan, status bayar)
+- [ ] Quick action: Konfirmasi + mulai pengerjaan / Catat pembayaran tunai
+
+#### 4.7 Operator View (PWA)
+
+- [ ] Dashboard operator: daftar tugas yang di-assign
+- [ ] `PUT /operator/task/{id}/start` — mulai cuci, start timer
+- [ ] `PUT /operator/task/{id}/progress` — upload foto progress
+- [ ] `PUT /operator/task/{id}/complete` — upload foto final, tandai selesai
+- [ ] Timer otomatis (durasi aktual vs estimasi)
+- [ ] Setup Service Worker untuk PWA (offline capability)
+
+---
+
+### ✅ PHASE 5 — Real-Time & Notifikasi (Minggu 7–8)
+
+#### 5.1 Laravel Reverb (WebSocket)
+
+- [ ] Install + konfigurasi Laravel Reverb
+- [ ] Buat channel `booking.{booking_id}` (private) — status update per booking
+- [ ] Buat channel `branch.{branch_id}.queue` — antrian real-time untuk kasir
+- [ ] Buat channel `branch.{branch_id}.stats` — stats real-time untuk admin
+- [ ] Test koneksi WebSocket dari React (kasir) dan Flutter (customer)
+
+#### 5.2 Events & Listeners
+
+- [ ] Event: `BookingCreated` → listener: update slot count, notif kasir
+- [ ] Event: `BookingConfirmed` → listener: push notif customer, broadcast status
+- [ ] Event: `BookingStatusUpdated` → listener: push notif FCM, broadcast channel, log status
+- [ ] Event: `PaymentReceived` → listener: update booking, trigger BookingConfirmed
+- [ ] Event: `BookingCancelled` → listener: restore slot, push notif, refund jika perlu
+
+#### 5.3 Push Notification (FCM)
+
+- [ ] Install `laravel-notification-channels/fcm` package
+- [ ] Buat `BookingStatusNotification` (via fcm, database, mail — lihat §11.2 PRD)
+- [ ] Implementasi semua trigger notifikasi dari tabel §11.1 PRD
+- [ ] Queue semua notifikasi via Laravel Horizon
+- [ ] Test notifikasi di Android dan iOS
+
+#### 5.4 Email Notification
+
+- [ ] Setup Mailgun / SMTP
+- [ ] Template email: Konfirmasi Booking, Pembayaran Berhasil, Booking Selesai, Pembatalan
+- [ ] Template email: Reminder H-1, Invoice PDF
+
+#### 5.5 Job Queue
+
+- [ ] Job: `SendBookingReminder` — cron H-1 sebelum slot
+- [ ] Job: `AutoCancelExpiredBooking` — cron setiap 5 menit, cancel booking unpaid > cutoff
+- [ ] Job: `SendReviewReminder` — trigger 1 jam setelah completed
+- [ ] Job: `ReconcilePaymentStatus` — cron setiap jam, sync status dari Midtrans
+- [ ] Monitor queue via Laravel Horizon dashboard
+
+---
+
+### ✅ PHASE 6 — Flutter App (Minggu 9–13)
+
+#### 6.1 Setup Project Flutter
+
+- [ ] `flutter create cuci_kuy_app` di folder `mobile/`
+- [ ] Install dependencies: `dio`, `riverpod` (atau `flutter_bloc`), `go_router`, `hive`, `firebase_messaging`, `google_maps_flutter`, `image_picker`
+- [ ] Setup GoRouter dengan deep linking
+- [ ] Setup Dio interceptor (token refresh + logging)
+- [ ] Setup Firebase project (iOS + Android)
+
+#### 6.2 Auth Screens
+
+- [ ] Splash Screen (logo + animasi loading)
+- [ ] Onboarding (3 slide fitur utama)
+- [ ] Login (email/phone + password + Google login)
+- [ ] Register (nama, email, phone, password)
+- [ ] OTP Verification
+- [ ] Forgot Password (link email)
+
+#### 6.3 Home & Cabang
+
+- [ ] Home/Beranda: banner promosi + quick action buttons + cabang terdekat + layanan populer
+- [ ] Halaman Pilih Cabang: list + filter (Terdekat, Rating, Buka Sekarang) + search + peta
+- [ ] Info cabang: jam operasional, rating, jarak, slot tersisa hari ini
+
+#### 6.4 Booking Flow
+
+- [ ] Halaman Pilih Layanan: card per layanan (deskripsi + foto + harga per kendaraan + add-on)
+- [ ] Halaman Pilih Slot: kalender picker + grid slot (hijau/kuning/merah) + cut-off time
+- [ ] Halaman Ringkasan Booking: review detail + textarea catatan + upload foto (max 3) + kode promo
+- [ ] Halaman Pembayaran: integrasi Midtrans Snap (QRIS, e-wallet, VA)
+- [ ] Halaman Konfirmasi: booking code + QR code
+
+#### 6.5 Status Tracking Real-Time
+
+- [ ] Halaman Status Pengerjaan: timeline vertikal (stepper) dengan timestamp per status
+- [ ] Dot status berdenyut (pulsing) untuk status saat ini
+- [ ] Foto progress (before/during/after) dari operator
+- [ ] Countdown timer estimasi selesai
+- [ ] WebSocket listener untuk update real-time (Echo/Pusher Flutter SDK)
+
+#### 6.6 Riwayat & Profil
+
+- [ ] Halaman Riwayat: list booking dengan filter status/tanggal/layanan
+- [ ] Detail Transaksi: invoice digital + bukti bayar + download PDF
+- [ ] Rating & Review: bintang 1-5 + komentar + foto
+- [ ] Repeat Booking (1 tap dari riwayat)
+- [ ] Halaman Profil: edit nama, avatar, email, telepon
+- [ ] Halaman Notifikasi: list in-app
+- [ ] Pengaturan: bahasa, notifikasi toggle, dark mode
+
+#### 6.7 Push Notification Flutter
+
+- [ ] Setup `firebase_messaging` (foreground + background + terminated)
+- [ ] Handle deep link dari notifikasi ke screen yang tepat (GoRouter)
+- [ ] Update FCM token ke server saat login / token refresh
+
+---
+
+### ✅ PHASE 7 — Laporan & Fitur Admin Lanjutan (Minggu 14–15)
+
+#### 7.1 Laporan Keuangan
+
+> Screen ref: `laporan_keuangan_cabang/screen.png`
+
+- [ ] Halaman Financial Reports: filter Date Range + Service Category + Export PDF
+- [ ] 4 Stat Cards: Total Revenue, Total Transactions, Unpaid Amount (merah), Avg. Ticket Size
+- [ ] Revenue Trend chart (line, toggle Revenue/Volume)
+- [ ] Service Split panel (progress bar per layanan + Pro-Tip insight)
+- [ ] Recent Transactions table dengan status badge PAID/UNPAID
+- [ ] Export PDF (menggunakan Laravel DomPDF / Spatie PDF)
+- [ ] Export Excel (menggunakan Maatwebsite Excel)
+
+#### 7.2 Laporan Statistik
+
+- [ ] Booking Rate (per hari/minggu/bulan)
+- [ ] Utilization Rate (slot terisi vs total slot)
+- [ ] Average Duration (aktual vs estimasi)
+- [ ] Customer Retention (repeat customer rate)
+- [ ] Service Popularity ranking
+- [ ] Peak Hours chart
+- [ ] Revenue per Employee
+- [ ] NPS / Rating average
+
+#### 7.3 Manajemen Stok & COGS (v2 preview)
+
+> Screen ref: `manajemen_stok_cogs/screen.png`
+
+- [ ] Tabel stok: nama item, kategori, current stock badge (Safe/Low/Critical)
+- [ ] Usage Over Time bar chart (7 hari)
+- [ ] Insight text otomatis berdasarkan trend
+- [ ] Priority Suppliers list
+- [ ] Tambah Barang Baru (FAB)
+- [ ] **Catatan: Tandai sebagai fitur v2, bisa dibangun tapi tidak wajib di v1**
+
+---
+
+### ✅ PHASE 8 — QA, Optimasi & Deploy (Minggu 15–16)
+
+#### 8.1 Testing
+
+- [ ] Unit tests: BookingService, PaymentService, SlotService
+- [ ] Feature tests: semua API endpoint (auth, booking, payment, slot)
+- [ ] Test webhook Midtrans (sandbox)
+- [ ] Test concurrent booking (tidak boleh double-booking)
+- [ ] Test auto-cancel expired booking
+- [ ] Test RBAC (setiap role hanya bisa akses datanya sendiri)
+- [ ] Test branch scoping (admin cabang tidak bisa akses cabang lain)
+
+#### 8.2 Performance Optimization
+
+- [ ] Verifikasi semua index database terpasang (lihat §8.3 PRD)
+- [ ] Cache branch data + slot availability di Redis
+- [ ] Cache pricing per kombinasi (service × branch × vehicle) di Redis
+- [ ] Eager loading relasi di semua query (N+1 elimination)
+- [ ] Pagination semua list endpoint (max 50 per halaman)
+- [ ] Compress gambar sebelum upload ke storage
+
+#### 8.3 Keamanan
+
+- [ ] Verifikasi signature webhook Midtrans (tidak boleh skip)
+- [ ] Rate limiting terpasang (60 req/menit per token)
+- [ ] CSRF protection aktif di semua web route
+- [ ] Validasi file upload (type, size, extension)
+- [ ] Audit trail aktif (activity_logs terisi di setiap perubahan data)
+- [ ] Sensitive env variables tidak ter-commit ke git
+
+#### 8.4 Deployment
+
+- [ ] Setup server production (VPS / cloud)
+- [ ] Setup Nginx config + SSL (Let's Encrypt)
+- [ ] Setup Supervisor untuk queue worker Horizon
+- [ ] Setup cron Laravel scheduler (`* * * * * php artisan schedule:run`)
+- [ ] Setup automated daily database backup
+- [ ] Setup `/health` endpoint untuk monitoring
+- [ ] Deploy Flutter app ke Play Store (Android) + App Store (iOS)
+
+---
+
+### 📊 Progres Ringkasan
+
+| Phase   | Deskripsi                    | Status           |
+| ------- | ---------------------------- | ---------------- |
+| Phase 1 | Foundation & Setup           | ⬜ Belum dimulai |
+| Phase 2 | Admin Dashboard FilamentPHP  | ⬜ Belum dimulai |
+| Phase 3 | API Backend Flutter          | ⬜ Belum dimulai |
+| Phase 4 | Kasir Web Inertia.js + React | ⬜ Belum dimulai |
+| Phase 5 | Real-Time & Notifikasi       | ⬜ Belum dimulai |
+| Phase 6 | Flutter App                  | ⬜ Belum dimulai |
+| Phase 7 | Laporan & Admin Lanjutan     | ⬜ Belum dimulai |
+| Phase 8 | QA, Optimasi & Deploy        | ⬜ Belum dimulai |
+
+> Update status: ⬜ Belum → 🟡 Dalam proses → ✅ Selesai
