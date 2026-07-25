@@ -8,6 +8,8 @@
     "require": {
         "php": "^8.3",
         "filament/filament": "^5.7",
+        "inertiajs/inertia-laravel": "^3.1",
+        "laravel-notification-channels/fcm": "^6.1",
         "laravel/framework": "^13.8",
         "laravel/horizon": "^5.48",
         "laravel/reverb": "^1.11",
@@ -15,7 +17,8 @@
         "laravel/telescope": "^5.21",
         "laravel/tinker": "^3.0",
         "predis/predis": "*",
-        "sentry/sentry-laravel": "^4.27"
+        "sentry/sentry-laravel": "^4.27",
+        "spatie/laravel-permission": "^8.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

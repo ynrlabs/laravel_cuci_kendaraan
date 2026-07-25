@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -54,5 +55,21 @@ class User extends Authenticatable
     public function notificationLogs(): HasMany
     {
         return $this->hasMany(NotificationLog::class);
+    }
+
+    public function hasRole(string|\App\Enums\UserRole $role): bool
+    {
+        $roleValue = $role instanceof \App\Enums\UserRole ? $role->value : $role;
+        return $this->userRoles()->where('role', $roleValue)->exists();
+    }
+
+    public function getBranchId(): ?string
+    {
+        return $this->userRoles()->whereNotNull('branch_id')->first()?->branch_id;
+    }
+
+    public function branches(): BelongsToMany
+    {
+        return $this->belongsToMany(Branch::class, 'user_roles', 'user_id', 'branch_id');
     }
 }

@@ -1,0 +1,89 @@
+{
+  "name": "CuciKuy Kasir",
+  "short_name": "CuciKuy",
+  "description": "Aplikasi Kasir & Operator CuciKuy - Manajemen Cuci Kendaraan",
+  "start_url": "/kasir/dashboard",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "scope": "/kasir/",
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Walk-in Booking",
+      "short_name": "Walk-in",
+      "description": "Buat booking walk-in baru",
+      "url": "/kasir/bookings/walkin",
+      "icons": [{ "src": "/icons/shortcut-walkin.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Scan QR",
+      "short_name": "Scan QR",
+      "description": "Scan QR code booking",
+      "url": "/kasir/bookings/scan",
+      "icons": [{ "src": "/icons/shortcut-scan.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Dashboard Operator",
+      "short_name": "Operator",
+      "description": "Lihat tugas operator",
+      "url": "/kasir/operator",
+      "icons": [{ "src": "/icons/shortcut-operator.png", "sizes": "192x192" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

@@ -2142,34 +2142,34 @@ Semua halaman kasir/admin menggunakan sidebar kiri lebar **280px** dengan:
 
 > Screen ref: `hak_akses_role_karyawan/screen.png`
 
-- [ ] Halaman Daftar Role (Kasir, Supervisor, Teknisi, Admin Cabang) + jumlah personel
-- [ ] Panel konfigurasi izin per role (checkbox grid: Buat Booking, Edit Harga, Update Status, dst)
-- [ ] Warning box untuk aksi berisiko (Hapus Transaksi)
-- [ ] Tombol Reset Default + Simpan Perubahan
+- [X] Halaman Daftar Role (Kasir, Supervisor, Teknisi, Admin Cabang) + jumlah personel
+- [X] Panel konfigurasi izin per role (checkbox grid: Buat Booking, Edit Harga, Update Status, dst)
+- [X] Warning box untuk aksi berisiko (Hapus Transaksi)
+- [X] Tombol Reset Default + Simpan Perubahan
 
 #### 2.9 Pengaturan Global
 
 > Screen ref: `pengaturan_global_setting/screen.png`
 
-- [ ] Tab navigasi: General Info, Payment Gateway, Operational Hours, Tax & Billing
-- [ ] Form General Info: Branch Name, Store ID (readonly), Alamat, Phone, Email
-- [ ] Form Payment Gateway: Midtrans (server key, client key, env) + Xendit (API key)
-- [ ] Form Operational Hours per hari
-- [ ] Form Tax & Billing: tax_rate, booking_cutoff_hours, payment_expired_minutes, dll
-- [ ] Semua setting key dari tabel §7.2.10 PRD
+- [X] Tab navigasi: General Info, Payment Gateway, Operational Hours, Tax & Billing
+- [X] Form General Info: Branch Name, Store ID (readonly), Alamat, Phone, Email
+- [X] Form Payment Gateway: Midtrans (server key, client key, env) + Xendit (API key)
+- [X] Form Operational Hours per hari
+- [X] Form Tax & Billing: tax_rate, booking_cutoff_hours, payment_expired_minutes, dll
+- [X] Semua setting key dari tabel §7.2.10 PRD
 
 #### 2.10 Dashboard Admin
 
 > Screen ref: `dashboard_kasir_cucikuy/screen.png`
 
-- [ ] 4 Stat Cards (Total Bookings, Daily Revenue, Active Queue X/Y, Avg. Wash Time)
-- [ ] Tombol "Scan QR" (kuning/oranye) + "New Walk-in" (biru gelap) di header
-- [ ] Recent Bookings table (Customer/Vehicle, License Plate JetBrains Mono, Service, Status badge, Price)
-- [ ] Live Occupancy bar chart (sidebar kanan)
-- [ ] Live Status feed per bay
-- [ ] Line chart pendapatan 7 hari terakhir
-- [ ] Doughnut chart booking per layanan
-- [ ] Bar chart booking per jam
+- [X] 4 Stat Cards (Total Bookings, Daily Revenue, Active Queue X/Y, Avg. Wash Time)
+- [X] Tombol "Scan QR" (kuning/oranye) + "New Walk-in" (biru gelap) di header
+- [X] Recent Bookings table (Customer/Vehicle, License Plate JetBrains Mono, Service, Status badge, Price)
+- [X] Live Occupancy bar chart (sidebar kanan)
+- [X] Live Status feed per bay
+- [X] Line chart pendapatan 7 hari terakhir
+- [X] Doughnut chart booking per layanan
+- [X] Bar chart booking per jam
 
 ---
 
@@ -2177,59 +2177,59 @@ Semua halaman kasir/admin menggunakan sidebar kiri lebar **280px** dengan:
 
 #### 3.1 Auth API
 
-- [ ] `POST /api/v1/auth/register` + Form Request validation
-- [ ] `POST /api/v1/auth/login` — return Sanctum token
-- [ ] `POST /api/v1/auth/logout` — revoke token
-- [ ] `POST /api/v1/auth/forgot-password`
-- [ ] `POST /api/v1/auth/reset-password`
-- [ ] `POST /api/v1/auth/verify-otp`
-- [ ] `POST /api/v1/auth/social-login` (Google/Apple)
-- [ ] `GET/PUT /api/v1/auth/me`
+- [X] `POST /api/v1/auth/register` + Form Request validation
+- [X] `POST /api/v1/auth/login` — return Sanctum token
+- [X] `POST /api/v1/auth/logout` — revoke token
+- [X] `POST /api/v1/auth/forgot-password`
+- [X] `POST /api/v1/auth/reset-password`
+- [X] `POST /api/v1/auth/verify-otp`
+- [X] `POST /api/v1/auth/social-login` (Google/Apple)
+- [X] `GET/PUT /api/v1/auth/me`
 
 #### 3.2 Branch API
 
-- [ ] `GET /api/v1/branches` — list + filter lokasi (lat/lng radius)
-- [ ] `GET /api/v1/branches/{id}` — detail + jam operasional
-- [ ] `GET /api/v1/branches/{id}/services` — layanan aktif + pricing
-- [ ] `GET /api/v1/branches/{id}/slots?date=YYYY-MM-DD` — slot tersedia
+- [X] `GET /api/v1/branches` — list + filter lokasi (lat/lng radius)
+- [X] `GET /api/v1/branches/{id}` — detail + jam operasional
+- [X] `GET /api/v1/branches/{id}/services` — layanan aktif + pricing
+- [X] `GET /api/v1/branches/{id}/slots?date=YYYY-MM-DD` — slot tersedia
 
 #### 3.3 Booking API
 
-- [ ] `POST /api/v1/bookings` — buat booking, generate booking_code (CK-YYYYMMDD-NNN)
-- [ ] `GET /api/v1/bookings` — riwayat customer (dengan pagination)
-- [ ] `GET /api/v1/bookings/{id}` — detail booking
-- [ ] `PUT /api/v1/bookings/{id}/cancel` — cancel + alasan
-- [ ] `GET /api/v1/bookings/{code}/track` — tracking by booking code (public)
-- [ ] `POST /api/v1/bookings/{id}/review` — rating 1-5 + komentar + foto
+- [X] `POST /api/v1/bookings` — buat booking, generate booking_code (CK-YYYYMMDD-NNN)
+- [X] `GET /api/v1/bookings` — riwayat customer (dengan pagination)
+- [X] `GET /api/v1/bookings/{id}` — detail booking
+- [X] `PUT /api/v1/bookings/{id}/cancel` — cancel + alasan
+- [X] `GET /api/v1/bookings/{code}/track` — tracking by booking code (public)
+- [X] `POST /api/v1/bookings/{id}/review` — rating 1-5 + komentar + foto
 
 #### 3.4 Payment API
 
-- [ ] `POST /api/v1/payments` — initiate Midtrans Snap, return snap_token
-- [ ] `GET /api/v1/payments/{id}/status` — cek status
-- [ ] `POST /api/v1/payments/callback` — webhook Midtrans (verifikasi signature)
-- [ ] `POST /api/v1/payments/{id}/retry` — retry expired payment
-- [ ] Implementasi `PaymentService::createTransaction()` (lihat §10.1 PRD)
-- [ ] Implementasi `PaymentService::handleWebhook()` + fire `BookingConfirmed` event
+- [X] `POST /api/v1/payments` — initiate Midtrans Snap, return snap_token
+- [X] `GET /api/v1/payments/{id}/status` — cek status
+- [X] `POST /api/v1/payments/callback` — webhook Midtrans (verifikasi signature)
+- [X] `POST /api/v1/payments/{id}/retry` — retry expired payment
+- [X] Implementasi `PaymentService::createTransaction()` (lihat §10.1 PRD)
+- [X] Implementasi `PaymentService::handleWebhook()` + fire `BookingConfirmed` event
 
 #### 3.5 Services & Promos API
 
-- [ ] `GET /api/v1/services` + `GET /api/v1/services/{id}`
-- [ ] `POST /api/v1/promos/apply` — validasi kode promo + hitung diskon
-- [ ] `GET /api/v1/promos/available` — promo aktif untuk customer
+- [X] `GET /api/v1/services` + `GET /api/v1/services/{id}`
+- [X] `POST /api/v1/promos/apply` — validasi kode promo + hitung diskon
+- [X] `GET /api/v1/promos/available` — promo aktif untuk customer
 
 #### 3.6 Slot Availability Logic
 
-- [ ] `SlotService::getAvailableSlots(branch, date)` — query slot_configurations, kurangi booked count
-- [ ] Logic cut-off time (min 2 jam sebelum slot)
-- [ ] Color indicator: Tersedia (< 50% penuh), Hampir Penuh (50–90%), Penuh (100%)
-- [ ] Caching slot availability di Redis (TTL 60 detik)
-- [ ] Handle concurrent booking (database-level locking / optimistic concurrency)
+- [X] `SlotService::getAvailableSlots(branch, date)` — query slot_configurations, kurangi booked count
+- [X] Logic cut-off time (min 2 jam sebelum slot)
+- [X] Color indicator: Tersedia (< 50% penuh), Hampir Penuh (50–90%), Penuh (100%)
+- [X] Caching slot availability di Redis (TTL 60 detik)
+- [X] Handle concurrent booking (database-level locking / optimistic concurrency)
 
 #### 3.7 Notifications API
 
-- [ ] `GET /api/v1/notifications` — list notifikasi customer
-- [ ] `PUT /api/v1/notifications/{id}/read` + `PUT /api/v1/notifications/read-all`
-- [ ] `POST /api/v1/notifications/fcm-token` — simpan/update FCM token device
+- [X] `GET /api/v1/notifications` — list notifikasi customer
+- [X] `PUT /api/v1/notifications/{id}/read` + `PUT /api/v1/notifications/read-all`
+- [X] `POST /api/v1/notifications/fcm-token` — simpan/update FCM token device
 
 ---
 
@@ -2239,21 +2239,21 @@ Semua halaman kasir/admin menggunakan sidebar kiri lebar **280px** dengan:
 
 #### 4.1 Setup
 
-- [ ] Install Inertia.js + React + Vite di Laravel
-- [ ] Install Tailwind CSS + Shadcn/ui
-- [ ] Daftarkan font Montserrat + Inter + JetBrains Mono
-- [ ] Setup layout utama: sidebar 280px + area konten + tombol "+ New Booking"
+- [X] Install Inertia.js + React + Vite di Laravel
+- [X] Install Tailwind CSS + Shadcn/ui
+- [X] Daftarkan font Montserrat + Inter + JetBrains Mono
+- [X] Setup layout utama: sidebar 280px + area konten + tombol "+ New Booking"
 
 #### 4.2 Halaman Dashboard Kasir
 
 > Screen ref: `dashboard_kasir_cucikuy/screen.png`
 
-- [ ] Sidebar navigasi (Dashboard aktif = bg biru muda)
-- [ ] Header: nama cabang + search bar + notif + Branch Status badge
-- [ ] 4 Stat Cards dengan trend indicator
-- [ ] Tabel Recent Bookings (license plate JetBrains Mono, status badge berwarna)
-- [ ] Panel kanan: Bay Utilization chart + Live Status feed
-- [ ] Tombol "Scan QR" (kuning) + "New Walk-in" (biru gelap)
+- [X] Sidebar navigasi (Dashboard aktif = bg biru muda)
+- [X] Header: nama cabang + search bar + notif + Branch Status badge
+- [X] 4 Stat Cards dengan trend indicator
+- [X] Tabel Recent Bookings (license plate JetBrains Mono, status badge berwarna)
+- [X] Panel kanan: Bay Utilization chart + Live Status feed
+- [X] Tombol "Scan QR" (kuning) + "New Walk-in" (biru gelap)
 
 #### 4.3 Halaman Antrian Kanban
 
@@ -2490,10 +2490,10 @@ Semua halaman kasir/admin menggunakan sidebar kiri lebar **280px** dengan:
 
 | Phase   | Deskripsi                    | Status           |
 | ------- | ---------------------------- | ---------------- |
-| Phase 1 | Foundation & Setup           | ⬜ Belum dimulai |
-| Phase 2 | Admin Dashboard FilamentPHP  | ⬜ Belum dimulai |
-| Phase 3 | API Backend Flutter          | ⬜ Belum dimulai |
-| Phase 4 | Kasir Web Inertia.js + React | ⬜ Belum dimulai |
+| Phase 1 | Foundation & Setup           | ✅ Selesai       |
+| Phase 2 | Admin Dashboard FilamentPHP  | ✅ Selesai       |
+| Phase 3 | API Backend Flutter          | ✅ Selesai       |
+| Phase 4 | Kasir Web Inertia.js + React | 🟡 Dalam proses |
 | Phase 5 | Real-Time & Notifikasi       | ⬜ Belum dimulai |
 | Phase 6 | Flutter App                  | ⬜ Belum dimulai |
 | Phase 7 | Laporan & Admin Lanjutan     | ⬜ Belum dimulai |

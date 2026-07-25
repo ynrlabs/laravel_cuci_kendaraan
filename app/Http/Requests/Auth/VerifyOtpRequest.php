@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Auth;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class VerifyOtpRequest extends FormRequest
 {
@@ -24,7 +24,7 @@ class VerifyOtpRequest extends FormRequest
     {
         return [
             'phone' => ['required', 'string', 'max:20'],
-            'otp' => ['required', 'string', 'size:6', 'numeric'],
+            'otp' => ['required', 'string', 'size:6', 'digits:6'],
         ];
     }
 
@@ -39,7 +39,7 @@ class VerifyOtpRequest extends FormRequest
             'phone.required' => 'Nomor telepon wajib diisi.',
             'otp.required' => 'Kode OTP wajib diisi.',
             'otp.size' => 'Kode OTP harus 6 digit.',
-            'otp.numeric' => 'Kode OTP harus berupa angka.',
+            'otp.digits' => 'Kode OTP harus berupa angka.',
         ];
     }
 }

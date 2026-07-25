@@ -82,10 +82,12 @@ class DatabaseSeeder extends Seeder
 
         // Run remaining seeders
         $this->call([
+            RolePermissionSeeder::class,
             ServiceSeeder::class,
             ServicePricingSeeder::class,
             AddOnSeeder::class,
             EmployeeSeeder::class,
+            SettingSeeder::class,
         ]);
     }
 }

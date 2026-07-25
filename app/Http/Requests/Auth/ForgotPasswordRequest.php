@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Auth;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\ValidationRule;
 
 class ForgotPasswordRequest extends FormRequest
 {
@@ -37,7 +37,7 @@ class ForgotPasswordRequest extends FormRequest
         return [
             'email.required' => 'Email wajib diisi.',
             'email.email' => 'Format email tidak valid.',
-            'email.exists' => 'Email tidak terdaftar.',
+            'email.exists' => 'Email tidak ditemukan.',
         ];
     }
 }
