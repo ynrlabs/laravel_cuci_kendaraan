@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return redirect('/kasir/dashboard');
+    return view('portal');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -153,4 +153,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-// require __DIR__.'/auth.php';
+require __DIR__.'/auth.php';

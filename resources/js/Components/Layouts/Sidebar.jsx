@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Link } from '@inertiajs/react';
-import { useLocation } from 'react-router-dom';
+import { Link, usePage } from '@inertiajs/react';
 import { cn } from '@/Lib/utils';
 import {
   LayoutDashboard,
@@ -32,7 +31,7 @@ const navigation = [
 ];
 
 export function Sidebar({ isOpen, onClose }) {
-  const location = useLocation();
+  const { url } = usePage();
 
   return (
     <>
@@ -75,7 +74,7 @@ export function Sidebar({ isOpen, onClose }) {
 
           <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" aria-label="Main navigation">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
+              const isActive = url === item.href || url.startsWith(item.href + '/');
               return (
                 <Link
                   key={item.name}
