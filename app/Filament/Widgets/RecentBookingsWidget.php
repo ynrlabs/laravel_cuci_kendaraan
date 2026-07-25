@@ -62,7 +62,7 @@ class RecentBookingsWidget extends BaseWidget
                     ->label('Status')
                     ->badge()
                     ->colors([
-                        'gray' => BookingStatus::PENDING->value,
+                        'gray' => BookingStatus::PENDING_PAYMENT->value,
                         'info' => BookingStatus::CONFIRMED->value,
                         'warning' => BookingStatus::IN_QUEUE->value,
                         'primary' => BookingStatus::WASHING->value,

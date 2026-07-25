@@ -40,13 +40,10 @@ class PendingBookingsAlertWidget extends Widget
         return Booking::query()
             ->whereDate('booking_date', $today)
             ->where(function ($query) {
-                $query->where('status', BookingStatus::PENDING->value)
+                $query->where('status', BookingStatus::PENDING_PAYMENT->value)
                     ->orWhere('status', BookingStatus::CONFIRMED->value);
             })
-            ->where(function ($query) {
-                $query->where('payment_status', PaymentStatus::PENDING->value)
-                    ->orWhere('payment_status', PaymentStatus::PARTIAL->value);
-            })
+            ->where('payment_status', PaymentStatus::UNPAID->value)
             ->when($branchIds && $branchIds->isNotEmpty(), fn(Builder $q) => $q->whereIn('branch_id', $branchIds));
     }
 
