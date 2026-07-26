@@ -13,4 +13,13 @@ class FinancialReport extends Page
     protected static ?int $navigationSort = 5;
 
     protected string $view = 'filament.pages.financial-report';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\RevenueLineChartWidget::class,
+            \App\Filament\Widgets\ServiceDoughnutChartWidget::class,
+            \App\Filament\Widgets\HourlyBookingsBarChartWidget::class,
+        ];
+    }
 }

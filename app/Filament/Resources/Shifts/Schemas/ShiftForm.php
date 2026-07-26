@@ -48,7 +48,7 @@ class ShiftForm
                     ->options(ShiftStatus::class)
                     ->required()
                     ->native(false)
-                    ->default(ShiftStatus::Scheduled),
+                    ->default(ShiftStatus::SCHEDULED),
             ])->columns(2);
     }
 }

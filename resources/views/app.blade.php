@@ -16,6 +16,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png">
     
+    @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.jsx'])
     @inertiaHead
 </head>

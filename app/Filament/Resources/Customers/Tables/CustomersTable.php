@@ -194,9 +194,7 @@ class CustomersTable
                             }
                         }),
                     ExportBulkAction::make()
-                        ->exports([
-                            \App\Filament\Exports\CustomerExporter::class,
-                        ]),
+                        ->exporter(\App\Filament\Exports\CustomerExporter::class),
                 ]),
             ])
             ->defaultSort('created_at', 'desc')

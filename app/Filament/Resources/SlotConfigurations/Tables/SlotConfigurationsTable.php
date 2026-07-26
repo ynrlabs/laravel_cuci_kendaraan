@@ -46,7 +46,7 @@ class SlotConfigurationsTable
                     ->date('d M Y')
                     ->sortable()
                     ->placeholder('-')
-                    ->visible(fn ($record) => $record->type === 'specific'),
+                    ->visible(fn ($record) => $record && $record->type === 'specific'),
 
                 TextColumn::make('day_of_week')
                     ->label('Hari')
@@ -61,7 +61,7 @@ class SlotConfigurationsTable
                         default => $state,
                     })
                     ->placeholder('-')
-                    ->visible(fn ($record) => $record->type === 'recurring'),
+                    ->visible(fn ($record) => $record && $record->type === 'recurring'),
 
                 TextColumn::make('slot_time')
                     ->label('Waktu')
@@ -82,13 +82,13 @@ class SlotConfigurationsTable
 
                 TextColumn::make('capacity_percentage')
                     ->label('Kapasitas')
-                    ->formatStateUsing(fn ($record): string => 
-                        $record->max_capacity > 0 
+                    ->formatStateUsing(fn ($state, $record): string => 
+                        $record && $record->max_capacity > 0 
                             ? round(($record->current_booked / $record->max_capacity) * 100) . '%'
                             : '0%'
                     )
                     ->color(fn ($record): string => 
-                        $record->max_capacity > 0 
+                        $record && $record->max_capacity > 0 
                             ? (($record->current_booked / $record->max_capacity) >= 1 ? 'danger' : 
                                 (($record->current_booked / $record->max_capacity) >= 0.8 ? 'warning' : 'success'))
                             : 'gray'
@@ -108,7 +108,7 @@ class SlotConfigurationsTable
                     ->label('Alasan Blokir')
                     ->limit(30)
                     ->placeholder('-')
-                    ->visible(fn ($record) => $record->is_blocked),
+                    ->visible(fn ($record) => $record && $record->is_blocked),
 
                 TextColumn::make('created_at')
                     ->label('Dibuat')

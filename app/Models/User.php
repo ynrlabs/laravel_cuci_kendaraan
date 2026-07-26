@@ -13,13 +13,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'email', 'password', 'phone', 'avatar', 'is_active', 'last_login_at'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasUuids;
+    use HasFactory, Notifiable, HasUuids, HasRoles {
+        hasRole as spatieHasRole;
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -60,7 +63,16 @@ class User extends Authenticatable
     public function hasRole(string|\App\Enums\UserRole $role): bool
     {
         $roleValue = $role instanceof \App\Enums\UserRole ? $role->value : $role;
-        return $this->userRoles()->where('role', $roleValue)->exists();
+        
+        if ($this->userRoles()->where('role', $roleValue)->exists()) {
+            return true;
+        }
+
+        try {
+            return $this->spatieHasRole($roleValue);
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function getBranchId(): ?string

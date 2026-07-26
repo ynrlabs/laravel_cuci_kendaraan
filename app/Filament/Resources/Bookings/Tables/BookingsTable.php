@@ -131,7 +131,7 @@ class BookingsTable
                         ->label('Mulai Cuci')
                         ->icon('heroicon-o-play')
                         ->color('info')
-                        ->visible(fn ($record) => in_array($record->status->value, ['confirmed', 'in_queue', 'pending_payment']))
+                        ->visible(fn ($record) => $record && in_array($record->status->value, ['confirmed', 'in_queue', 'pending_payment']))
                         ->action(function ($record) {
                             $record->startWash();
                         }),
@@ -140,7 +140,7 @@ class BookingsTable
                         ->label('Selesai Cuci')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn ($record) => in_array($record->status->value, ['washing', 'drying']))
+                        ->visible(fn ($record) => $record && in_array($record->status->value, ['washing', 'drying']))
                         ->action(function ($record) {
                             $record->completeWash();
                         }),
@@ -149,16 +149,16 @@ class BookingsTable
                         ->label('Reschedule')
                         ->icon('heroicon-o-clock')
                         ->color('warning')
-                        ->visible(fn ($record) => !in_array($record->status->value, ['completed', 'cancelled', 'no_show']))
+                        ->visible(fn ($record) => $record && !in_array($record->status->value, ['completed', 'cancelled', 'no_show']))
                         ->form([
                             DatePicker::make('booking_date')
                                 ->label('Tanggal Baru')
                                 ->required()
-                                ->default(fn ($record) => $record->booking_date),
+                                ->default(fn ($record) => $record?->booking_date),
                             TimePicker::make('slot_time')
                                 ->label('Jam Baru')
                                 ->required()
-                                ->default(fn ($record) => $record->slot_time),
+                                ->default(fn ($record) => $record?->slot_time),
                         ])
                         ->action(function ($record, array $data) {
                             $record->reschedule($data['booking_date'], $data['slot_time']);
@@ -171,11 +171,12 @@ class BookingsTable
                         ->form([
                             Select::make('assigned_employee_id')
                                 ->label('Pilih Karyawan')
-                                ->options(fn ($record) => \App\Models\Employee::where('branch_id', $record->branch_id)
+                                ->options(fn ($record) => $record ? \App\Models\Employee::where('branch_id', $record->branch_id)
                                     ->where('is_active', true)
                                     ->with('user')
                                     ->get()
                                     ->pluck('user.name', 'id')
+                                    : []
                                 )
                                 ->required(),
                         ])
@@ -188,7 +189,7 @@ class BookingsTable
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->visible(fn ($record) => !in_array($record->status->value, ['completed', 'cancelled', 'no_show']))
+                        ->visible(fn ($record) => $record && !in_array($record->status->value, ['completed', 'cancelled', 'no_show']))
                         ->form([
                             Textarea::make('reason')
                                 ->label('Alasan Pembatalan')

@@ -101,16 +101,7 @@ class RoleForm
             ->options($options)
             ->columns(3)
             ->searchable()
-            ->helperText('Pilih izin untuk role ini. Izin dengan ⚠️ adalah aksi berbahaya.')
-            ->getOptionLabelUsing(fn (string $value): string => self::formatPermissionLabel($value))
-            ->getOptionColorUsing(function (string $value): ?string {
-                $permission = Permission::where('name', $value)->first();
-                return $permission?->is_dangerous ? 'danger' : null;
-            })
-            ->getOptionWeightUsing(function (string $value): ?string {
-                $permission = Permission::where('name', $value)->first();
-                return $permission?->is_dangerous ? 'bold' : 'normal';
-            });
+            ->helperText('Pilih izin untuk role ini. Izin dengan ⚠️ adalah aksi berbahaya.');
     }
 
     protected static function getDangerousPermissionsWarning(): \Filament\Forms\Components\Placeholder

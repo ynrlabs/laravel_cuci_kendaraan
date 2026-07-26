@@ -36,23 +36,25 @@ export default function BookingCreate() {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="customer_name">Nama Pelanggan *</Label>
-                <Input
-                  id="customer_name"
-                  placeholder="Masukkan nama pelanggan"
-                  className="flex items-center gap-2"
-                >
-                  <User className="h-4 w-4 text-muted-foreground" />
-                </Input>
+                <div className="relative">
+                  <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="customer_name"
+                    placeholder="Masukkan nama pelanggan"
+                    className="pl-9"
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="customer_phone">Nomor Telepon *</Label>
-                <Input
-                  id="customer_phone"
-                  placeholder="08xx-xxxx-xxxx"
-                  className="flex items-center gap-2"
-                >
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                </Input>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="customer_phone"
+                    placeholder="08xx-xxxx-xxxx"
+                    className="pl-9"
+                  />
+                </div>
               </div>
             </div>
             <div className="space-y-2">

@@ -17,7 +17,7 @@ class ShiftScheduleWidget extends Widget
 
     protected static ?int $sort = 2;
 
-    public ?int $selectedBranchId = null;
+    public ?string $selectedBranchId = null;
 
     public ?string $currentWeekStart = null;
 

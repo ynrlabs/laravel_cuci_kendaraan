@@ -25,4 +25,9 @@ class ListEmployees extends ListRecords
             \App\Filament\Resources\Employees\Widgets\CommissionRatesWidget::class,
         ];
     }
+
+    public function getHeaderWidgetsColumns(): int | array
+    {
+        return 1;
+    }
 }

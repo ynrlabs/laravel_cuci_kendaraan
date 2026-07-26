@@ -44,7 +44,7 @@ class EmployeeForm
                     ->options(SalaryType::class)
                     ->required()
                     ->inline()
-                    ->default(SalaryType::Monthly),
+                    ->default(SalaryType::MONTHLY),
                 TextInput::make('base_salary')
                     ->label('Base Salary')
                     ->required()

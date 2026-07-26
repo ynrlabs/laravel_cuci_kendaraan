@@ -12,7 +12,7 @@ class HourlyBookingsBarChartWidget extends ChartWidget
 {
     protected ?string $heading = 'Bookings by Hour (Today)';
     protected static ?int $sort = 7;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'half';
 
     protected function getData(): array
     {

@@ -14,7 +14,7 @@ class LiveOccupancyWidget extends ChartWidget
 {
     protected ?string $heading = 'Live Occupancy (Today)';
     protected static ?int $sort = 3;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'half';
 
     protected function getData(): array
     {

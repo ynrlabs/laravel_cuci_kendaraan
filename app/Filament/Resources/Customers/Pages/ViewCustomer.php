@@ -9,14 +9,14 @@ use App\Enums\LoyaltyTier;
 use Filament\Actions\Action;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ActionGroup;
-use Filament\Infolists\Components\Section;
+use Filament\Schemas\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Tabs;
-use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
@@ -53,9 +53,7 @@ class ViewCustomer extends ViewRecord
                 ExportAction::make('export')
                     ->label('Export Data')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->exports([
-                        \App\Filament\Exports\CustomerExporter::class,
-                    ]),
+                    ->exporter(\App\Filament\Exports\CustomerExporter::class),
             ])
                 ->label('Actions')
                 ->icon('heroicon-m-ellipsis-vertical')

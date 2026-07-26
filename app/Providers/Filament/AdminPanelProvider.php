@@ -10,6 +10,7 @@ use App\Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -36,8 +37,18 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Inter')
             ->renderHook(
-                \Filament\View\PanelsRenderHook::HEAD_END,
+                PanelsRenderHook::HEAD_END,
                 fn (): string => '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet"><style>h1, h2, h3, .fi-header-heading, .fi-logo, .fi-sidebar-group-label { font-family: "Montserrat", sans-serif !important; } code, pre, .fi-code { font-family: "JetBrains Mono", monospace !important; }</style>'
+            )
+            ->renderHook(
+                PanelsRenderHook::BODY_START,
+                fn (): string => view('filament.components.loading-screen', [
+                    'variant' => 'spinner',
+                    'color' => 'primary',
+                    'size' => 'md',
+                    'text' => 'Memuat halaman...',
+                    'overlay' => true,
+                ])->render()
             )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')

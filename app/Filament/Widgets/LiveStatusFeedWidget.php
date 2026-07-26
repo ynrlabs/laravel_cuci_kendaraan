@@ -16,7 +16,7 @@ class LiveStatusFeedWidget extends BaseWidget
 {
     protected static ?string $heading = 'Live Bay Status Feed';
     protected static ?int $sort = 4;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'half';
 
     public function table(Table $table): Table
     {

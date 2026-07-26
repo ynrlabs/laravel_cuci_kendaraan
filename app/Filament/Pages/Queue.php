@@ -13,4 +13,12 @@ class Queue extends Page
     protected static ?int $navigationSort = 2;
 
     protected string $view = 'filament.pages.queue';
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            \App\Filament\Widgets\LiveOccupancyWidget::class,
+            \App\Filament\Widgets\LiveStatusFeedWidget::class,
+        ];
+    }
 }

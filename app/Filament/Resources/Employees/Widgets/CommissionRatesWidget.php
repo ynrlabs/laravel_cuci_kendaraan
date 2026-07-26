@@ -16,7 +16,7 @@ class CommissionRatesWidget extends Widget
 
     protected static ?int $sort = 3;
 
-    public ?int $selectedBranchId = null;
+    public ?string $selectedBranchId = null;
 
     public array $branchOptions = [];
 

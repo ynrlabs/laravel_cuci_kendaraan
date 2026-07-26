@@ -12,7 +12,7 @@ class RevenueLineChartWidget extends ChartWidget
 {
     protected ?string $heading = 'Revenue (Last 7 Days)';
     protected static ?int $sort = 5;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'half';
 
     protected function getData(): array
     {

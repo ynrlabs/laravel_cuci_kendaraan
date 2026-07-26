@@ -46,30 +46,26 @@ class Dashboard extends BaseDashboard implements HasActions
     public function getWidgets(): array
     {
         return [
+            // Row 1: Stats Overview (4 columns)
             DashboardStatsWidget::class,
             AvgRatingStatWidget::class,
+            
+            // Row 2: Pending Alerts (full width - important alerts)
             PendingBookingsAlertWidget::class,
-            [
-                'columnSpan' => 'full',
-                'widgets' => [
-                    LiveOccupancyWidget::class,
-                    LiveStatusFeedWidget::class,
-                ],
-            ],
-            [
-                'columnSpan' => 'full',
-                'widgets' => [
-                    RecentBookingsWidget::class,
-                ],
-            ],
-            [
-                'columnSpan' => 'full',
-                'widgets' => [
-                    RevenueLineChartWidget::class,
-                    ServiceDoughnutChartWidget::class,
-                    HourlyBookingsBarChartWidget::class,
-                ],
-            ],
+            
+            // Row 3: Live Occupancy & Live Status Feed (2 columns side by side)
+            LiveOccupancyWidget::class,
+            LiveStatusFeedWidget::class,
+            
+            // Row 4: Recent Bookings (half) + Revenue Chart (half)
+            RecentBookingsWidget::class,
+            RevenueLineChartWidget::class,
+            
+            // Row 5: Service Chart (half) + Hourly Chart (half)
+            ServiceDoughnutChartWidget::class,
+            HourlyBookingsBarChartWidget::class,
+            
+            // Row 6: Top Customers (full width table)
             TopCustomersWidget::class,
         ];
     }

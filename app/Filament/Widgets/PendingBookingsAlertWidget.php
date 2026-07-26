@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 class PendingBookingsAlertWidget extends Widget
 {
     protected static ?string $heading = 'Pending Confirmations';
-    protected static ?int $sort = 9;
+    protected static ?int $sort = 2;
     protected int | string | array $columnSpan = 'full';
     protected string $view = 'filament.widgets.pending-bookings-alert';
 

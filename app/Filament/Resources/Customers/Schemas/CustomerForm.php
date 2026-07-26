@@ -10,6 +10,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\DatePicker;
 use App\Enums\LoyaltyTier;
@@ -24,31 +25,36 @@ class CustomerForm
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                TextInput::make('user.name')
-                                    ->label('Full Name')
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->relationship('user', 'name'),
+                                Group::make([
+                                    Grid::make(2)
+                                        ->schema([
+                                            TextInput::make('name')
+                                                ->label('Full Name')
+                                                ->required()
+                                                ->maxLength(255),
 
-                                TextInput::make('user.email')
-                                    ->label('Email')
-                                    ->email()
-                                    ->required()
-                                    ->maxLength(255)
-                                    ->relationship('user', 'email'),
+                                            TextInput::make('email')
+                                                ->label('Email')
+                                                ->email()
+                                                ->required()
+                                                ->maxLength(255),
 
-                                TextInput::make('user.phone')
-                                    ->label('Phone')
-                                    ->tel()
-                                    ->required()
-                                    ->maxLength(20)
-                                    ->relationship('user', 'phone'),
+                                            TextInput::make('phone')
+                                                ->label('Phone')
+                                                ->tel()
+                                                ->required()
+                                                ->maxLength(20),
+                                        ])
+                                ])
+                                    ->relationship('user')
+                                    ->columnSpan(2),
 
                                 Select::make('loyalty_tier')
                                     ->label('Loyalty Tier')
                                     ->options(LoyaltyTier::class)
                                     ->default(LoyaltyTier::BRONZE->value)
-                                    ->required(),
+                                    ->required()
+                                    ->columnSpan(2),
                             ]),
 
                         Grid::make(2)
@@ -79,8 +85,9 @@ class CustomerForm
                     ->columns(2),
 
                 Section::make('Profile Photo')
+                    ->relationship('user')
                     ->schema([
-                        FileUpload::make('user.avatar')
+                        FileUpload::make('avatar')
                             ->label('Avatar')
                             ->disk('public')
                             ->directory('customers/avatars')
@@ -89,8 +96,7 @@ class CustomerForm
                             ->imageCropAspectRatio('1:1')
                             ->imageResizeTargetWidth('200')
                             ->imageResizeTargetHeight('200')
-                            ->maxSize(2048)
-                            ->relationship('user', 'avatar'),
+                            ->maxSize(2048),
                     ])
                     ->collapsible(),
 
@@ -101,11 +107,12 @@ class CustomerForm
                             ->rows(3)
                             ->placeholder('Internal notes about this customer...'),
 
-                        Toggle::make('user.is_active')
-                            ->label('Active Status')
-                            ->default(true)
-                            ->relationship('user', 'is_active')
-                            ->inline(false),
+                        Group::make([
+                            Toggle::make('is_active')
+                                ->label('Active Status')
+                                ->default(true)
+                                ->inline(false),
+                        ])->relationship('user'),
                     ]),
             ]);
     }

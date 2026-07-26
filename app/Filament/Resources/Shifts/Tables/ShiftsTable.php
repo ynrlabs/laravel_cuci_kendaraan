@@ -56,10 +56,10 @@ class ShiftsTable
                 BadgeColumn::make('status')
                     ->label('Status')
                     ->colors([
-                        'gray' => ShiftStatus::Scheduled,
-                        'info' => ShiftStatus::Active,
-                        'success' => ShiftStatus::Completed,
-                        'danger' => ShiftStatus::Absent,
+                        'gray' => ShiftStatus::SCHEDULED,
+                        'info' => ShiftStatus::ACTIVE,
+                        'success' => ShiftStatus::COMPLETED,
+                        'danger' => ShiftStatus::ABSENT,
                     ])
                     ->formatStateUsing(fn (ShiftStatus $state): string => $state->label()),
 
@@ -72,7 +72,12 @@ class ShiftsTable
             ->filters([
                 SelectFilter::make('employee_id')
                     ->label('Employee')
-                    ->relationship('employee', 'user.name')
+                    ->options(fn () => \App\Models\Employee::query()
+                        ->join('users', 'employees.user_id', '=', 'users.id')
+                        ->orderBy('users.name')
+                        ->pluck('users.name', 'employees.id')
+                        ->toArray()
+                    )
                     ->searchable()
                     ->preload(),
 

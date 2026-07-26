@@ -41,7 +41,7 @@ class ManageSlotConfiguration extends Page implements HasForms
 
     public ?array $data = [];
 
-    public ?int $selectedBranchId = null;
+    public ?string $selectedBranchId = null;
 
     public ?string $selectedDate = null;
 

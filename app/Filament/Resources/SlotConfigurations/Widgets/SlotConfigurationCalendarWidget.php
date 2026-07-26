@@ -15,7 +15,7 @@ class SlotConfigurationCalendarWidget extends Widget
 
     protected static ?int $sort = 1;
 
-    public ?int $selectedBranchId = null;
+    public ?string $selectedBranchId = null;
 
     public ?string $currentMonth = null;
 

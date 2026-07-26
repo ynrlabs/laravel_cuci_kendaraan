@@ -12,7 +12,7 @@ class ServiceDoughnutChartWidget extends ChartWidget
 {
     protected ?string $heading = 'Bookings by Service';
     protected static ?int $sort = 6;
-    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'half';
 
     protected function getData(): array
     {
