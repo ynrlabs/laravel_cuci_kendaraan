@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { MainLayout } from '@/Components/Layouts/MainLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/Components/UI';
 import { Button } from '@/Components/UI';
@@ -9,702 +10,577 @@ import {
   Car,
   Truck,
   Bike,
-  Circle,
   Clock,
-  Loader2,
-  CheckCircle,
+  CheckCircle2,
   CreditCard,
   QrCode,
-  Car as CarIcon,
-  Truck as TruckIcon,
-  Bike as BikeIcon,
   Users,
   DollarSign,
-  CheckCircle2,
-  Minus,
+  Search,
+  Sparkles,
+  Zap,
+  Volume2,
+  VolumeX,
+  RefreshCw,
+  Plus,
+  Radio,
+  ArrowRight,
+  GripVertical,
 } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { Link, usePage } from '@inertiajs/react';
 
 // Vehicle type badges
 const vehicleTypeConfig = {
-  motor: { label: 'Motor', icon: BikeIcon, color: 'bg-purple-100 text-purple-700 border-purple-200', iconColor: 'text-purple-600' },
-  mobil: { label: 'Mobil', icon: CarIcon, color: 'bg-blue-100 text-blue-700 border-blue-200', iconColor: 'text-blue-600' },
-  suv: { label: 'SUV', icon: CarIcon, color: 'bg-green-100 text-green-700 border-green-200', iconColor: 'text-green-600' },
-  truck: { label: 'Truk', icon: TruckIcon, color: 'bg-orange-100 text-orange-700 border-orange-200', iconColor: 'text-orange-600' },
+  motor: { label: 'Motor', icon: Bike, color: 'bg-purple-500/10 text-purple-400 border-purple-500/20', iconColor: 'text-purple-400' },
+  mobil: { label: 'Mobil', icon: Car, color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', iconColor: 'text-blue-400' },
+  suv: { label: 'SUV', icon: Car, color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', iconColor: 'text-emerald-400' },
+  truck: { label: 'Truk', icon: Truck, color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', iconColor: 'text-amber-400' },
 };
 
 const statusConfig = {
-  PENDING: { label: 'PENDING', color: 'bg-yellow-100 text-yellow-700 border-yellow-200', borderColor: 'border-yellow-400' },
-  WASHING: { label: 'WASHING', color: 'bg-blue-100 text-blue-700 border-blue-200', borderColor: 'border-blue-500' },
-  DRYING: { label: 'DRYING', color: 'bg-orange-100 text-orange-700 border-orange-200', borderColor: 'border-orange-500' },
-  READY: { label: 'READY', color: 'bg-green-100 text-green-700 border-green-200', borderColor: 'border-green-500' },
-  PAID: { label: 'PAID', color: 'bg-emerald-100 text-emerald-700 border-emerald-200', borderColor: 'border-emerald-500' },
+  PENDING: { label: 'MENUNGGU', color: 'bg-amber-500/10 text-amber-400 border-amber-500/30', borderGlow: 'border-amber-500/60 shadow-amber-500/10' },
+  WASHING: { label: 'DICUCI', color: 'bg-blue-500/10 text-blue-400 border-blue-500/30', borderGlow: 'border-blue-500/60 shadow-blue-500/10' },
+  DRYING: { label: 'PENGERINGAN', color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30', borderGlow: 'border-indigo-500/60 shadow-indigo-500/10' },
+  READY: { label: 'QC & SELESAI', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30', borderGlow: 'border-emerald-500/60 shadow-emerald-500/10' },
+  PAID: { label: 'LUNAS / KELUAR', color: 'bg-teal-500/10 text-teal-400 border-teal-500/30', borderGlow: 'border-teal-500/60 shadow-teal-500/10' },
 };
 
-// Mock data
-const mockBookings = [
+// Initial data
+const initialBookings = [
   {
     id: 'BK-001',
     bookingCode: 'BK-001',
     vehicleType: 'mobil',
+    vehicleName: 'Toyota Avanza',
     plateNumber: 'B 1234 ABC',
     serviceName: 'Cuci Lengkap + Wax',
-    status: 'PENDING',
-    waitTime: '15 menit',
-    operator: { name: 'Budi', avatar: null },
+    status: 'WASHING',
+    operator: { name: 'Budi Santoso', avatar: null },
     bay: 'Bay 1',
-    progress: 0,
-    timeLeft: '15:00',
+    progress: 45,
+    timeLeftSeconds: 900,
+    price: 'Rp 250.000',
+    isPaid: false,
     createdAt: '08:30',
   },
   {
     id: 'BK-002',
     bookingCode: 'BK-002',
     vehicleType: 'motor',
+    vehicleName: 'Honda Vario 160',
     plateNumber: 'B 2345 DEF',
-    serviceName: 'Cuci Biasa',
-    status: 'PENDING',
-    waitTime: '25 menit',
-    operator: { name: 'Siti', avatar: null },
+    serviceName: 'Cuci Biasa + Semir',
+    status: 'DRYING',
+    operator: { name: 'Siti Rahayu', avatar: null },
     bay: 'Bay 2',
-    progress: 0,
-    timeLeft: '25:00',
+    progress: 85,
+    timeLeftSeconds: 300,
+    price: 'Rp 45.000',
+    isPaid: true,
     createdAt: '08:45',
   },
   {
     id: 'BK-003',
     bookingCode: 'BK-003',
     vehicleType: 'suv',
+    vehicleName: 'Mitsubishi Pajero',
     plateNumber: 'B 3456 GHI',
     serviceName: 'Cuci Interior + Exterior',
     status: 'PENDING',
-    waitTime: '35 menit',
-    operator: { name: 'Ahmad', avatar: null },
+    operator: { name: 'Ahmad Wijaya', avatar: null },
     bay: 'Bay 3',
     progress: 0,
-    timeLeft: '35:00',
+    timeLeftSeconds: 2100,
+    price: 'Rp 180.000',
+    isPaid: false,
     createdAt: '09:00',
   },
   {
     id: 'BK-004',
     bookingCode: 'BK-004',
     vehicleType: 'mobil',
+    vehicleName: 'Honda Civic',
     plateNumber: 'B 4567 JKL',
-    serviceName: 'Cuci Lengkap + Poles',
-    status: 'WASHING',
-    waitTime: '0 menit',
-    operator: { name: 'Rizki', avatar: null },
-    bay: 'Bay 1',
-    progress: 65,
-    timeLeft: '12:30',
-    createdAt: '09:30',
+    serviceName: 'Cuci Lengkap + Poles Glass',
+    status: 'PENDING',
+    operator: { name: 'Rizki Pratama', avatar: null },
+    bay: 'Antrian',
+    progress: 0,
+    timeLeftSeconds: 2400,
+    price: 'Rp 300.000',
+    isPaid: false,
+    createdAt: '09:15',
   },
   {
     id: 'BK-005',
     bookingCode: 'BK-005',
-    vehicleType: 'motor',
-    plateNumber: 'B 5678 MNO',
-    serviceName: 'Cuci Biasa',
-    status: 'DRYING',
-    waitTime: '0 menit',
-    operator: { name: 'Dewi', avatar: null },
-    bay: 'Bay 2',
-    progress: 85,
-    timeLeft: '05:15',
-    createdAt: '10:00',
+    vehicleType: 'truck',
+    vehicleName: 'Isuzu Elf Pickup',
+    plateNumber: 'B 6789 PQR',
+    serviceName: 'Cuci Truk / Box',
+    status: 'READY',
+    operator: { name: 'Budi Santoso', avatar: null },
+    bay: 'Bay 4',
+    progress: 100,
+    timeLeftSeconds: 0,
+    price: 'Rp 150.000',
+    isPaid: false,
+    createdAt: '09:30',
   },
   {
     id: 'BK-006',
     bookingCode: 'BK-006',
-    vehicleType: 'truck',
-    plateNumber: 'B 6789 PQR',
-    serviceName: 'Cuci Besar',
-    status: 'WASHING',
-    waitTime: '0 menit',
-    operator: { name: 'Budi', avatar: null },
-    bay: 'Bay 4',
-    progress: 30,
-    timeLeft: '25:00',
-    createdAt: '10:15',
-  },
-  {
-    id: 'BK-007',
-    bookingCode: 'BK-007',
     vehicleType: 'mobil',
-    plateNumber: 'B 7890 STU',
-    serviceName: 'Cuci Lengkap',
-    status: 'READY',
-    waitTime: 'Selesai',
-    operator: { name: 'Siti', avatar: null },
-    bay: 'Bay 3',
-    progress: 100,
-    timeLeft: '00:00',
-    createdAt: '10:30',
-    isPaid: false,
-  },
-  {
-    id: 'BK-008',
-    bookingCode: 'BK-008',
-    vehicleType: 'suv',
+    vehicleName: 'Hyundai Ioniq 5',
     plateNumber: 'B 8901 VWX',
-    serviceName: 'Cuci Interior + Exterior',
+    serviceName: 'Detailing Hydrophobic',
     status: 'PAID',
-    waitTime: 'Lunas',
-    operator: { name: 'Ahmad', avatar: null },
+    operator: { name: 'Rizki Pratama', avatar: null },
     bay: 'Bay 1',
     progress: 100,
-    timeLeft: '00:00',
-    createdAt: '11:00',
+    timeLeftSeconds: 0,
+    price: 'Rp 450.000',
     isPaid: true,
+    createdAt: '08:00',
   },
 ];
 
-function VehicleBadge({ type }) {
-  const config = vehicleTypeConfig[type] || vehicleTypeConfig.mobil;
-  const Icon = config.icon;
-  return (
-    <Badge variant="outline" className={cn(config.color, 'gap-1.5 font-medium')}>
-      <Icon className={cn('h-3 w-3', config.iconColor)} />
-      {config.label}
-    </Badge>
-  );
-}
+// Modern Web Audio synthesizer for tactile UI sound effects
+function playSound(type) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
 
-function StatusBadge({ status }) {
-  const config = statusConfig[status] || statusConfig.PENDING;
-  return (
-    <Badge variant="outline" className={cn(config.color, 'font-montserrat font-semibold text-xs')}>
-      {config.label}
-    </Badge>
-  );
-}
-
-function OperatorAvatar({ operator }) {
-  return (
-    <Avatar className="h-8 w-8">
-      <AvatarImage src={operator.avatar} alt={operator.name} />
-      <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
-        {operator.name.charAt(0).toUpperCase()}
-      </AvatarFallback>
-    </Avatar>
-  );
-}
-
-function formatTimeLeft(seconds) {
-  if (seconds <= 0) return '00:00';
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-function parseTimeLeft(timeStr) {
-  const parts = timeStr.split(':').map(Number);
-  if (parts.length === 2) {
-    return parts[0] * 60 + parts[1];
-  }
-  return 0;
-}
-
-function PendingCard({ booking, onMoveToProgress }) {
-  const config = vehicleTypeConfig[booking.vehicleType] || vehicleTypeConfig.mobil;
-  
-  return (
-    <Card 
-      className={cn(
-        'border-l-4 transition-all hover:shadow-md',
-        `border-${config.color.split(' ')[0].replace('bg-', '').replace('-100', '-400', '-400')}`
-      )}
-    >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <VehicleBadge type={booking.vehicleType} />
-          <StatusBadge status={booking.status} />
-        </div>
-        
-        <div className="mb-3">
-          <p className="font-montserrat font-bold text-lg text-foreground">
-            {booking.bookingCode}
-          </p>
-          <p className="font-jetbrains-mono text-sm text-foreground font-medium">
-            {booking.plateNumber}
-          </p>
-        </div>
-        
-        <div className="mb-3">
-          <p className="text-sm font-medium text-foreground">{booking.serviceName}</p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            Est. tunggu: {booking.waitTime}
-          </p>
-        </div>
-        
-        <div className="flex items-center justify-between pt-3 border-t">
-          <div className="flex items-center gap-2">
-            <OperatorAvatar operator={booking.operator} />
-            <span className="text-xs text-muted-foreground">{booking.operator.name}</span>
-          </div>
-          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
-            {booking.bay}
-          </Badge>
-        </div>
-        
-        <Button 
-          className="w-full mt-3 gap-2 bg-primary hover:bg-primary/90"
-          onClick={() => onMoveToProgress(booking.id)}
-          size="sm"
-        >
-          <Circle className="h-4 w-4" />
-          Mulai Cuci
-        </Button>
-      </CardContent>
-    </Card>
-  );
-}
-
-function InProgressCard({ booking, onComplete, onPayNow }) {
-  const config = statusConfig[booking.status] || statusConfig.WASHING;
-  const isWashing = booking.status === 'WASHING';
-  const isDrying = booking.status === 'DRYING';
-  const [timeLeft, setTimeLeft] = useState(parseTimeLeft(booking.timeLeft));
-  
-  useEffect(() => {
-    if (timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => Math.max(0, prev - 1));
-      }, 1000);
-      return () => clearInterval(timer);
+    if (type === 'drop') {
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.15, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.1);
+    } else if (type === 'success') {
+      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+      osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
+      osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.16); // G5
+      gain.gain.setValueAtTime(0.2, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.3);
+    } else if (type === 'bell') {
+      osc.frequency.setValueAtTime(800, ctx.currentTime);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.4);
     }
-  }, [timeLeft]);
-  
-  const borderColor = isWashing ? 'border-blue-500' : 'border-orange-500';
-  const bgColor = isWashing ? 'bg-blue-50' : 'bg-orange-50';
-  const progressColor = isWashing ? 'bg-blue-500' : 'bg-orange-500';
-  const statusIcon = isWashing ? (
-    <Loader2 className="h-4 w-4 animate-spin text-blue-500" />
-  ) : (
-    <Circle className="h-4 w-4 text-orange-500" />
-  );
-  
-  return (
-    <Card className={cn('border-l-4', borderColor, bgColor, 'relative overflow-hidden')}>
-      <div className={`absolute top-0 left-0 right-0 h-1 ${progressColor}`} 
-           style={{ width: `${booking.progress}%` }} />
-      
-      <CardContent className="p-4 relative">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <VehicleBadge type={booking.vehicleType} />
-          <StatusBadge status={booking.status} />
-        </div>
-        
-        <div className="mb-3">
-          <p className="font-montserrat font-bold text-lg text-foreground">
-            {booking.bookingCode}
-          </p>
-          <p className="font-jetbrains-mono text-sm text-foreground font-medium">
-            {booking.plateNumber}
-          </p>
-        </div>
-        
-        <div className="mb-3">
-          <p className="text-sm font-medium text-foreground">{booking.serviceName}</p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            {statusIcon}
-            Bay: {booking.bay}
-          </p>
-        </div>
-        
-        {/* Progress Bar */}
-        <div className="mb-3">
-          <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-muted-foreground">Progress</span>
-            <span className="font-medium text-foreground">{booking.progress}%</span>
-          </div>
-          <div className="h-2 bg-muted rounded-full overflow-hidden">
-            <div 
-              className={cn('h-full rounded-full transition-all duration-300', progressColor)}
-              style={{ width: `${booking.progress}%` }}
-            />
-          </div>
-        </div>
-        
-        {/* Countdown Timer */}
-        <div className="mb-3 p-3 bg-background/50 rounded-lg border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Clock className={cn('h-4 w-4', isWashing ? 'text-blue-500' : 'text-orange-500')} />
-              <span className="text-xs font-medium text-muted-foreground">
-                {isWashing ? 'Sisa Washing' : 'Sisa Drying'}
-              </span>
-            </div>
-            <span className="font-jetbrains-mono text-lg font-bold tabular-nums 
-              {timeLeft > 60 ? 'text-foreground' : 'text-red-500'}">
-              {formatTimeLeft(timeLeft)}
-            </span>
-          </div>
-        </div>
-        
-        <div className="flex items-center justify-between pt-3 border-t">
-          <div className="flex items-center gap-2">
-            <OperatorAvatar operator={booking.operator} />
-            <span className="text-xs text-muted-foreground">{booking.operator.name}</span>
-          </div>
-          
-          <div className="flex gap-2">
-            {booking.progress >= 100 && (
-              <>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-green-700 border-green-300 bg-green-50 hover:bg-green-100"
-                  onClick={() => onComplete(booking.id)}
-                >
-                  <CheckCircle2 className="h-3 w-3 mr-1" />
-                  Selesai
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-emerald-700 border-emerald-300 bg-emerald-50 hover:bg-emerald-100"
-                  onClick={() => onPayNow(booking.id)}
-                >
-                  <CreditCard className="h-3 w-3 mr-1" />
-                  Bayar
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
+  } catch (e) {
+    // AudioContext blocked by browser autoplay policy
+  }
 }
 
-function CompletedCard({ booking, onPayNow }) {
-  const config = statusConfig[booking.status] || statusConfig.READY;
-  const isPaid = booking.status === 'PAID';
-  
-  return (
-    <Card className={cn('border-l-4', config.borderColor)}>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <VehicleBadge type={booking.vehicleType} />
-          <StatusBadge status={booking.status} />
-        </div>
-        
-        <div className="mb-3">
-          <p className="font-montserrat font-bold text-lg text-foreground">
-            {booking.bookingCode}
-          </p>
-          <p className="font-jetbrains-mono text-sm text-foreground font-medium">
-            {booking.plateNumber}
-          </p>
-        </div>
-        
-        <div className="mb-3">
-          <p className="text-sm font-medium text-foreground">{booking.serviceName}</p>
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            <CheckCircle2 className="h-3 w-3 text-green-500" />
-            Selesai pada {booking.createdAt}
-          </p>
-        </div>
-        
-        <div className="flex items-center justify-between pt-3 border-t">
-          <div className="flex items-center gap-2">
-            <OperatorAvatar operator={booking.operator} />
-            <span className="text-xs text-muted-foreground">{booking.operator.name}</span>
-          </div>
-          
-          {!isPaid && (
-            <Button 
-              className="gap-2 bg-emerald-600 hover:bg-emerald-700 text-emerald-50"
-              onClick={() => onPayNow(booking.id)}
-              size="sm"
-            >
-              <CreditCard className="h-4 w-4" />
-              <span className="font-montserrat font-semibold">BAYAR SEKARANG</span>
-            </Button>
-          )}
-          
-          {isPaid && (
-            <Badge variant="outline" className="bg-emerald-50 border-emerald-200 text-emerald-700">
-              <CheckCircle2 className="h-3 w-3" />
-              LUNAS
-            </Badge>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function KanbanColumn({ title, status, bookings, children, count, color }) {
-  const statusColor = statusConfig[status]?.color || 'bg-gray-100 text-gray-700';
-  
-  return (
-    <div className="flex flex-col h-full min-w-[320px] max-w-[340px] flex-shrink-0">
-      <Card className="h-full flex flex-col border-l-4" style={{ borderLeftColor: color }}>
-        <CardHeader className="pb-3 flex-shrink-0">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className={cn('h-2 w-2 rounded-full', statusColor.replace('100', '500'))} />
-              <CardTitle className="text-base font-montserrat font-bold">{title}</CardTitle>
-            </div>
-            <Badge variant="outline" className={cn('font-montserrat font-semibold', statusColor)}>
-              {count}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="flex-1 p-0 pt-4 overflow-y-auto">
-          <div className="p-3 space-y-3">
-            {children}
-            {bookings.length === 0 && (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="h-12 w-12 mx-auto mb-2 rounded-full bg-muted/50 flex items-center justify-center">
-                  <Minus className="h-6 w-6 text-muted-foreground/50" />
-                </div>
-                <p className="text-sm">Tidak ada antrian</p>
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
-function StatsFooter({ stats }) {
-  return (
-    <div className="fixed bottom-0 left-0 right-0 lg:left-64 bg-background border-t z-40">
-      <div className="grid grid-cols-4 gap-4 p-4 lg:p-6 max-w-full mx-auto">
-        <StatItem 
-          icon={Car} 
-          label="Total Antrian" 
-          value={stats.totalQueue} 
-          color="text-blue-600 bg-blue-100" 
-          trend="+2 dari jam lalu"
-        />
-        <StatItem 
-          icon={Loader2} 
-          label="Sedang Proses" 
-          value={stats.inProgress} 
-          color="text-orange-600 bg-orange-100" 
-          trend="3 washing, 1 drying"
-        />
-        <StatItem 
-          icon={CheckCircle2} 
-          label="Selesai Hari Ini" 
-          value={stats.completedToday} 
-          color="text-green-600 bg-green-100" 
-          trend="+5 dari kemarin"
-        />
-        <StatItem 
-          icon={DollarSign} 
-          label="Pendapatan" 
-          value={stats.revenue} 
-          color="text-emerald-600 bg-emerald-100" 
-          trend="+12% vs kemarin"
-        />
-      </div>
-    </div>
-  );
-}
-
-function StatItem({ icon: Icon, label, value, color, trend }) {
-  return (
-    <div className="bg-card rounded-xl border p-4">
-      <div className="flex items-center justify-between mb-2">
-        <div className={cn('p-2 rounded-lg', color)}>
-          <Icon className="h-5 w-5" />
-        </div>
-        <span className="text-xs text-muted-foreground">{trend}</span>
-      </div>
-      <p className="font-montserrat text-2xl font-bold text-foreground">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-function ScanQRFab({ onClick }) {
-  return (
-    <button
-      onClick={onClick}
-      className="fixed bottom-24 right-6 z-50 h-14 w-14 rounded-full bg-yellow-500 hover:bg-yellow-600 text-yellow-900 shadow-lg transition-all hover:shadow-xl flex items-center justify-center"
-      aria-label="Scan QR Code"
-    >
-      <QrCode className="h-7 w-7" />
-    </button>
-  );
-}
-
-// WebSocket hook for real-time updates
-function useWebSocket(onBookingUpdate) {
-  useEffect(() => {
-    // In production, this would connect to Laravel Reverb
-    // const echo = new Echo({
-    //   broadcaster: 'reverb',
-    //   key: import.meta.env.VITE_REVERB_APP_KEY,
-    //   wsHost: import.meta.env.VITE_REVERB_HOST,
-    //   wsPort: import.meta.env.VITE_REVERB_PORT,
-    //   wssPort: import.meta.env.VITE_REVERB_PORT,
-    //   forceTLS: false,
-    //   disableStats: true,
-    // });
-    //
-    // echo.channel('antrian-kanban')
-    //   .listen('BookingStatusUpdated', (e) => {
-    //     onBookingUpdate(e.booking);
-    //   });
-    
-    // Mock real-time updates for demo
-    const interval = setInterval(() => {
-      // Simulate random updates
-      if (Math.random() > 0.7) {
-        // In a real app, this would come from WebSocket
-        console.log('[WebSocket] Mock update received');
-      }
-    }, 30000);
-    
-    return () => clearInterval(interval);
-  }, [onBookingUpdate]);
+function formatTimer(seconds) {
+  if (seconds <= 0) return '00:00';
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 }
 
 export default function Kanban() {
-  const [bookings, setBookings] = useState(mockBookings);
-  const [showQRScanner, setShowQRScanner] = useState(false);
-  
-  const pendingBookings = bookings.filter(b => b.status === 'PENDING');
-  const inProgressBookings = bookings.filter(b => ['WASHING', 'DRYING'].includes(b.status));
-  const completedBookings = bookings.filter(b => ['READY', 'PAID'].includes(b.status));
-  
-  const stats = {
-    totalQueue: pendingBookings.length + inProgressBookings.length,
-    inProgress: inProgressBookings.length,
-    completedToday: completedBookings.length,
-    revenue: 'Rp 12.500.000',
+  const { auth } = usePage().props;
+  const [bookings, setBookings] = useState(initialBookings);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [draggedId, setDraggedId] = useState(null);
+  const [dragOverColumn, setDragOverColumn] = useState(null);
+  const [isLiveConnected, setIsLiveConnected] = useState(false);
+
+  // Live Timer effect
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setBookings(prev =>
+        prev.map(b => {
+          if (['WASHING', 'DRYING'].includes(b.status) && b.timeLeftSeconds > 0) {
+            const nextTime = b.timeLeftSeconds - 1;
+            const progress = Math.min(100, Math.round(((2400 - nextTime) / 2400) * 100));
+            return { ...b, timeLeftSeconds: nextTime, progress };
+          }
+          return b;
+        })
+      );
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // WebSocket Live Sync (Laravel Reverb)
+  useEffect(() => {
+    if (window.Echo) {
+      const branchId = auth?.user?.branch_id || 'main';
+      const channel = window.Echo.channel(`branch.${branchId}.queue`);
+
+      channel.subscribed(() => {
+        setIsLiveConnected(true);
+      });
+
+      channel.listen('.BookingStatusUpdated', (event) => {
+        if (soundEnabled) playSound('bell');
+        if (event.booking) {
+          setBookings(prev => {
+            const idx = prev.findIndex(b => b.id === event.booking.id);
+            if (idx >= 0) {
+              const updated = [...prev];
+              updated[idx] = { ...updated[idx], ...event.booking };
+              return updated;
+            }
+            return [event.booking, ...prev];
+          });
+        }
+      });
+
+      return () => {
+        window.Echo.leaveChannel(`branch.${branchId}.queue`);
+      };
+    }
+  }, [auth, soundEnabled]);
+
+  // Filtered Bookings
+  const filteredBookings = useMemo(() => {
+    return bookings.filter(b => {
+      const matchesSearch =
+        b.plateNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        b.bookingCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (b.vehicleName && b.vehicleName.toLowerCase().includes(searchQuery.toLowerCase()));
+      const matchesType = selectedType === 'all' || b.vehicleType === selectedType;
+      return matchesSearch && matchesType;
+    });
+  }, [bookings, searchQuery, selectedType]);
+
+  // Drag and drop handlers
+  const handleDragStart = (e, bookingId) => {
+    setDraggedId(bookingId);
+    e.dataTransfer.setData('text/plain', bookingId);
+    e.dataTransfer.effectAllowed = 'move';
   };
-  
-  const handleMoveToProgress = useCallback((bookingId) => {
-    setBookings(prev => prev.map(b => 
-      b.id === bookingId 
-        ? { ...b, status: 'WASHING', progress: 0, timeLeft: '20:00' }
-        : b
-    ));
-  }, []);
-  
-  const handleComplete = useCallback((bookingId) => {
-    setBookings(prev => prev.map(b => 
-      b.id === bookingId 
-        ? { ...b, status: 'READY', progress: 100, timeLeft: '00:00', isPaid: false }
-        : b
-    ));
-  }, []);
-  
-  const handlePayNow = useCallback((bookingId) => {
-    setBookings(prev => prev.map(b => 
-      b.id === bookingId 
-        ? { ...b, status: 'PAID', isPaid: true }
-        : b
-    ));
-  }, []);
-  
-  // Setup WebSocket for real-time updates
-  useWebSocket(useCallback((updatedBooking) => {
-    setBookings(prev => prev.map(b => b.id === updatedBooking.id ? updatedBooking : b));
-  }, []));
-  
+
+  const handleDragOver = (e, columnStatus) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (dragOverColumn !== columnStatus) {
+      setDragOverColumn(columnStatus);
+    }
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setDragOverColumn(null);
+  };
+
+  const handleDrop = (e, targetStatus) => {
+    e.preventDefault();
+    setDragOverColumn(null);
+    const bookingId = e.dataTransfer.getData('text/plain') || draggedId;
+    if (!bookingId) return;
+
+    setBookings(prev =>
+      prev.map(b => {
+        if (b.id === bookingId) {
+          let progress = b.progress;
+          let isPaid = b.isPaid;
+          if (targetStatus === 'WASHING') progress = 35;
+          if (targetStatus === 'DRYING') progress = 75;
+          if (targetStatus === 'READY') progress = 100;
+          if (targetStatus === 'PAID') {
+            progress = 100;
+            isPaid = true;
+          }
+          return { ...b, status: targetStatus, progress, isPaid };
+        }
+        return b;
+      })
+    );
+
+    if (soundEnabled) {
+      if (['READY', 'PAID'].includes(targetStatus)) {
+        playSound('success');
+      } else {
+        playSound('drop');
+      }
+    }
+    setDraggedId(null);
+  };
+
+  // Quick Action Buttons
+  const handleAdvanceStatus = (bookingId, currentStatus) => {
+    const sequence = ['PENDING', 'WASHING', 'DRYING', 'READY', 'PAID'];
+    const nextIdx = sequence.indexOf(currentStatus) + 1;
+    if (nextIdx < sequence.length) {
+      const nextStatus = sequence[nextIdx];
+      handleDrop({ preventDefault: () => {}, dataTransfer: { getData: () => bookingId } }, nextStatus);
+    }
+  };
+
+  // Live Bay calculations
+  const bays = [
+    { name: 'Bay 1 (Mobil)', type: 'mobil', booking: bookings.find(b => b.bay === 'Bay 1' && ['WASHING', 'DRYING'].includes(b.status)) },
+    { name: 'Bay 2 (Motor)', type: 'motor', booking: bookings.find(b => b.bay === 'Bay 2' && ['WASHING', 'DRYING'].includes(b.status)) },
+    { name: 'Bay 3 (SUV/Mobil)', type: 'suv', booking: bookings.find(b => b.bay === 'Bay 3' && ['WASHING', 'DRYING'].includes(b.status)) },
+    { name: 'Bay 4 (Truk/Besar)', type: 'truck', booking: bookings.find(b => b.bay === 'Bay 4' && ['WASHING', 'DRYING'].includes(b.status)) },
+  ];
+
+  const columns = [
+    { status: 'PENDING', title: 'Antrian Masuk', color: 'border-amber-500', bg: 'bg-amber-500/5' },
+    { status: 'WASHING', title: 'Sedang Dicuci', color: 'border-blue-500', bg: 'bg-blue-500/5' },
+    { status: 'DRYING', title: 'Pengeringan & Detailing', color: 'border-indigo-500', bg: 'bg-indigo-500/5' },
+    { status: 'READY', title: 'QC & Siap Diambil', color: 'border-emerald-500', bg: 'bg-emerald-500/5' },
+    { status: 'PAID', title: 'Selesai & Lunas', color: 'border-teal-500', bg: 'bg-teal-500/5' },
+  ];
+
   return (
-    <MainLayout pageTitle="Antrian Kanban" pageDescription="Kelola antrian cuci kendaraan mode Kanban">
-      <div className="h-[calc(100vh-8rem)] lg:h-[calc(100vh-6rem)] flex flex-col overflow-hidden">
-        {/* Kanban Board */}
-        <div className="flex-1 overflow-x-auto overflow-y-hidden pb-20 lg:pb-24">
-          <div className="flex gap-4 min-w-max h-full px-4 lg:px-6 py-4">
-            {/* Pending Column */}
-            <KanbanColumn
-              title="Pending"
-              status="PENDING"
-              bookings={pendingBookings}
-              count={pendingBookings.length}
-              color="#f59e0b"
-            >
-              {pendingBookings.map(booking => (
-                <PendingCard
-                  key={booking.id}
-                  booking={booking}
-                  onMoveToProgress={handleMoveToProgress}
-                />
-              ))}
-            </KanbanColumn>
+    <MainLayout pageTitle="Antrian Kanban" pageDescription="Kelola alur cuci kendaraan real-time dengan Drag & Drop">
+      <div className="flex flex-col h-[calc(100vh-5.5rem)] space-y-4">
+        
+        {/* Top Control Bar & Live Bay Monitor */}
+        <div className="bg-slate-900/80 border border-slate-800/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             
-            {/* In Progress Column */}
-            <KanbanColumn
-              title="In Progress"
-              status="WASHING"
-              bookings={inProgressBookings}
-              count={inProgressBookings.length}
-              color="#3b82f6"
-            >
-              {inProgressBookings.map(booking => (
-                <InProgressCard
-                  key={booking.id}
-                  booking={booking}
-                  onComplete={handleComplete}
-                  onPayNow={handlePayNow}
+            {/* Search & Filters */}
+            <div className="flex flex-wrap items-center gap-2 flex-1">
+              <div className="relative flex-1 min-w-[200px] max-w-md">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type="text"
+                  placeholder="Cari Plat (B 1234), Kode, atau Mobil..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 bg-slate-950/60 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-all font-mono"
                 />
-              ))}
-            </KanbanColumn>
-            
-            {/* Completed Column */}
-            <KanbanColumn
-              title="Completed"
-              status="READY"
-              bookings={completedBookings}
-              count={completedBookings.length}
-              color="#10b981"
-            >
-              {completedBookings.map(booking => (
-                <CompletedCard
-                  key={booking.id}
-                  booking={booking}
-                  onPayNow={handlePayNow}
-                />
-              ))}
-            </KanbanColumn>
+              </div>
+
+              {/* Vehicle Type Filter */}
+              <div className="flex items-center gap-1 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
+                {['all', 'mobil', 'motor', 'suv', 'truck'].map((type) => (
+                  <button
+                    key={type}
+                    onClick={() => setSelectedType(type)}
+                    className={cn(
+                      'px-2.5 py-1 text-xs font-semibold rounded-lg capitalize transition-all',
+                      selectedType === type
+                        ? 'bg-blue-600 text-white shadow-sm'
+                        : 'text-slate-400 hover:text-white'
+                    )}
+                  >
+                    {type === 'all' ? 'Semua' : type}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions & Live Indicator */}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950/60 border border-slate-800 text-xs">
+                <span className={cn('w-2 h-2 rounded-full animate-pulse', isLiveConnected ? 'bg-emerald-500 shadow-[0_0_8px_#10b981]' : 'bg-blue-500')} />
+                <span className="text-slate-300 font-mono text-[11px]">{isLiveConnected ? 'Reverb Live' : 'Real-Time Sync'}</span>
+              </div>
+
+              <button
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                className="p-2 rounded-xl bg-slate-950/60 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+                title={soundEnabled ? 'Matikan Suara Chime' : 'Aktifkan Suara Chime'}
+              >
+                {soundEnabled ? <Volume2 className="w-4 h-4 text-blue-400" /> : <VolumeX className="w-4 h-4" />}
+              </button>
+
+              <Link
+                href="/kasir/bookings/walkin"
+                className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-blue-500/20 flex items-center gap-1.5 transition-all active:scale-95"
+              >
+                <Plus className="w-4 h-4" />
+                <span>+ Walk-in Baru</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Live Bay Stall Visualizer */}
+          <div className="mt-4 pt-3 border-t border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-3">
+            {bays.map((bay, idx) => (
+              <div
+                key={idx}
+                className={cn(
+                  'p-2.5 rounded-xl border transition-all flex items-center justify-between',
+                  bay.booking
+                    ? 'bg-blue-950/20 border-blue-500/30 shadow-sm'
+                    : 'bg-slate-950/40 border-slate-800/60'
+                )}
+              >
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className={cn('w-2 h-2 rounded-full', bay.booking ? 'bg-blue-400 animate-ping' : 'bg-emerald-500')} />
+                    <span className="text-xs font-bold text-slate-200">{bay.name}</span>
+                  </div>
+                  {bay.booking ? (
+                    <p className="text-[11px] font-mono text-blue-400 mt-0.5 font-bold">
+                      {bay.booking.plateNumber} • <span className="text-slate-400 font-sans">{bay.booking.operator?.name?.split(' ')[0]}</span>
+                    </p>
+                  ) : (
+                    <p className="text-[11px] text-emerald-400/80 font-medium mt-0.5">Siap Digunakan</p>
+                  )}
+                </div>
+
+                {bay.booking && (
+                  <div className="text-right">
+                    <span className="text-xs font-mono font-bold text-white bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                      {formatTimer(bay.booking.timeLeftSeconds)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
-        
-        {/* FAB Scan QR */}
-        <ScanQRFab onClick={() => setShowQRScanner(true)} />
-        
-        {/* Stats Footer */}
-        <StatsFooter stats={stats} />
-        
-        {/* QR Scanner Modal */}
-        {showQRScanner && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 lg:hidden">
-            <Card className="w-full max-w-md mx-4">
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <QrCode className="h-5 w-5 text-yellow-500" />
-                  Scan QR Code
-                  <button onClick={() => setShowQRScanner(false)} className="text-muted-foreground hover:text-foreground">
-                    ✕
-                  </button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="py-6 text-center">
-                <div className="w-64 h-64 mx-auto mb-4 bg-muted rounded-lg flex items-center justify-center">
-                  <QrCode className="h-32 w-32 text-muted-foreground/50" />
+
+        {/* Drag & Drop Kanban Columns Area */}
+        <div className="flex-1 overflow-x-auto overflow-y-hidden pb-4">
+          <div className="flex gap-4 h-full min-w-max">
+            {columns.map(col => {
+              const colBookings = filteredBookings.filter(b => b.status === col.status);
+              const isOver = dragOverColumn === col.status;
+
+              return (
+                <div
+                  key={col.status}
+                  onDragOver={(e) => handleDragOver(e, col.status)}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => handleDrop(e, col.status)}
+                  className={cn(
+                    'w-80 flex flex-col rounded-2xl border bg-slate-900/60 backdrop-blur-xl transition-all duration-200 overflow-hidden',
+                    col.color,
+                    isOver ? 'ring-2 ring-blue-500 scale-[1.01] bg-blue-950/20' : 'border-slate-800/80'
+                  )}
+                >
+                  {/* Column Header */}
+                  <div className="p-3.5 border-b border-slate-800/80 flex items-center justify-between bg-slate-950/40">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-current" />
+                      <h3 className="font-bold text-xs tracking-wider uppercase text-slate-200">{col.title}</h3>
+                    </div>
+                    <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
+                      {colBookings.length}
+                    </span>
+                  </div>
+
+                  {/* Column Cards Container */}
+                  <div className="flex-1 p-3 overflow-y-auto space-y-3 custom-scrollbar">
+                    {colBookings.length === 0 ? (
+                      <div className="h-32 border-2 border-dashed border-slate-800/80 rounded-xl flex items-center justify-center text-xs text-slate-500">
+                        {isOver ? 'Lepas untuk memindahkan di sini' : 'Tidak ada antrian'}
+                      </div>
+                    ) : (
+                      colBookings.map(booking => {
+                        const vConfig = vehicleTypeConfig[booking.vehicleType] || vehicleTypeConfig.mobil;
+                        const VIcon = vConfig.icon;
+
+                        return (
+                          <div
+                            key={booking.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, booking.id)}
+                            className={cn(
+                              'group bg-slate-950/80 border border-slate-800 rounded-xl p-3.5 shadow-lg hover:border-blue-500/50 hover:shadow-blue-500/5 transition-all duration-200 cursor-grab active:cursor-grabbing relative',
+                              draggedId === booking.id && 'opacity-40 border-blue-400'
+                            )}
+                          >
+                            {/* Card Top */}
+                            <div className="flex items-start justify-between gap-2 mb-2">
+                              <div>
+                                <span className="font-mono text-[11px] font-bold text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20">
+                                  {booking.bookingCode}
+                                </span>
+                                <h4 className="font-mono font-bold text-base text-white mt-1 tracking-wide">
+                                  {booking.plateNumber}
+                                </h4>
+                                <p className="text-xs text-slate-400 font-medium">{booking.vehicleName}</p>
+                              </div>
+
+                              <div className="flex flex-col items-end gap-1">
+                                <Badge variant="outline" className={cn(vConfig.color, 'text-[10px] gap-1 py-0 px-2')}>
+                                  <VIcon className="w-3 h-3" />
+                                  {vConfig.label}
+                                </Badge>
+                                <span className="text-[10px] font-mono text-slate-500">{booking.bay}</span>
+                              </div>
+                            </div>
+
+                            {/* Service and Price */}
+                            <div className="p-2 rounded-lg bg-slate-900/80 border border-slate-800/60 mb-2.5">
+                              <p className="text-xs text-slate-300 font-medium flex items-center justify-between">
+                                <span>{booking.serviceName}</span>
+                                <span className="font-mono font-bold text-emerald-400">{booking.price}</span>
+                              </p>
+                            </div>
+
+                            {/* Progress bar if washing/drying */}
+                            {['WASHING', 'DRYING'].includes(booking.status) && (
+                              <div className="mb-2.5">
+                                <div className="flex items-center justify-between text-[10px] font-mono text-slate-400 mb-1">
+                                  <span>Progress Cuci</span>
+                                  <span className="text-blue-400 font-bold">{booking.progress}%</span>
+                                </div>
+                                <div className="h-1.5 bg-slate-900 rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all duration-300"
+                                    style={{ width: `${booking.progress}%` }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Card Footer: Operator & Advance Button */}
+                            <div className="flex items-center justify-between pt-2 border-t border-slate-800/60">
+                              <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                <Avatar className="w-5 h-5">
+                                  <AvatarFallback className="text-[9px] bg-blue-600 text-white font-bold">
+                                    {booking.operator?.name?.charAt(0) || 'O'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-[11px] truncate max-w-[90px]">{booking.operator?.name}</span>
+                              </div>
+
+                              <div className="flex items-center gap-1.5">
+                                {booking.status !== 'PAID' && (
+                                  <button
+                                    onClick={() => handleAdvanceStatus(booking.id, booking.status)}
+                                    className="px-2 py-1 bg-slate-800 hover:bg-blue-600 text-white rounded-lg text-[11px] font-semibold flex items-center gap-1 transition-all"
+                                    title="Majukan ke tahap selanjutnya"
+                                  >
+                                    <span>Lanjut</span>
+                                    <ArrowRight className="w-3 h-3" />
+                                  </button>
+                                )}
+
+                                {booking.status === 'READY' && !booking.isPaid && (
+                                  <Link
+                                    href={`/kasir/payments/checkout/${booking.id}`}
+                                    className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all shadow-sm"
+                                  >
+                                    <CreditCard className="w-3 h-3" />
+                                    <span>Bayar</span>
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Arahkan kamera ke QR code pada tiket booking pelanggan
-                </p>
-                <Button className="w-full mt-4" onClick={() => setShowQRScanner(false)}>
-                  Tutup
-                </Button>
-              </CardContent>
-            </Card>
+              );
+            })}
           </div>
-        )}
+        </div>
       </div>
     </MainLayout>
   );

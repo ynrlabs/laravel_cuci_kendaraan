@@ -50,7 +50,12 @@ class AdminPanelProvider extends PanelProvider
                     'overlay' => true,
                 ])->render()
             )
+            ->renderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): string => view('filament.components.demo-credentials')->render()
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
+
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 Dashboard::class,

@@ -358,9 +358,29 @@ export default function CheckoutPage({ booking = mockBooking }) {
       onFinish: () => setIsProcessing(false),
     });
   };
-
-  const handlePrint = () => {
+const handlePrint = () => {
     window.print();
+  };
+
+  const handleSendWhatsApp = () => {
+    const rawPhone = booking.customer?.phone || '';
+    const cleanPhone = rawPhone.replace(/[^0-9]/g, '').replace(/^0/, '62');
+    const message = encodeURIComponent(
+      `*STRUK PEMBAYARAN CUCIKUY*\n` +
+      `--------------------------------\n` +
+      `No. Booking: ${booking.bookingCode}\n` +
+      `Pelanggan: ${booking.customer?.name}\n` +
+      `Kendaraan: ${booking.vehicle?.brand} ${booking.vehicle?.model} (${booking.vehicle?.plate})\n` +
+      `Metode: ${paymentMethod} ${splitPayment ? '(Split)' : ''}\n` +
+      `Total: Rp ${total.toLocaleString('id-ID')}\n` +
+      `Status: LUNAS\n` +
+      `Kasir: ${booking.cashier}\n` +
+      `Waktu: ${booking.createdAt}\n` +
+      `--------------------------------\n` +
+      `Terima kasih telah mempercayakan kendaraan Anda di CuciKuy!\n` +
+      `Lacak antrian: ${window.location.origin}/?track=${booking.bookingCode}`
+    );
+    window.open(`https://wa.me/${cleanPhone || '6281234567890'}?text=${message}`, '_blank');
   };
 
   return (
@@ -496,57 +516,81 @@ export default function CheckoutPage({ booking = mockBooking }) {
                   <Receipt className="h-5 w-5" />
                   Preview Struk Thermal (80mm)
                 </CardTitle>
-                <Button variant="outline" size="icon" onClick={handlePrint} className="gap-1">
-                  <Printer className="h-4 w-4" />
-                  <span className="hidden sm:inline">Print</span>
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" onClick={handleSendWhatsApp} className="gap-1 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/30">
+                    <Smartphone className="h-4 w-4" />
+                    <span>WhatsApp</span>
+                  </Button>
+                  <Button variant="outline" size="icon" onClick={handlePrint} className="gap-1">
+                    <Printer className="h-4 w-4" />
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="flex justify-center">
-                  <ReceiptPreview
-                    booking={booking}
-                    paymentMethod={paymentMethod}
-                    amounts={amounts}
-                    splitPayment={splitPayment}
-                  />
+                <div className="bg-white text-black p-6 rounded-lg font-mono text-xs max-w-sm mx-auto shadow-inner border border-gray-300">
+                  <div className="text-center pb-3 border-b border-dashed border-gray-400">
+                    <h3 className="font-bold text-base">CUCIKUY CAR WASH</h3>
+                    <p className="text-[10px] text-gray-600">{booking.branch.name}</p>
+                    <p className="text-[10px] text-gray-600">{booking.branch.address}</p>
+                    <p className="text-[10px] text-gray-600">Telp: {booking.branch.phone}</p>
+                  </div>
+
+                  <div className="py-2.5 border-b border-dashed border-gray-400 space-y-1 text-[11px]">
+                    <div className="flex justify-between">
+                      <span>No: {booking.bookingCode}</span>
+                      <span>{booking.createdAt.split(' ')[0]}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Plat: {booking.vehicle.plate}</span>
+                      <span>{booking.vehicle.brand}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>Plgn: {booking.customer.name}</span>
+                      <span>Kasir: {booking.cashier}</span>
+                    </div>
+                  </div>
+
+                  <div className="py-2.5 border-b border-dashed border-gray-400 space-y-1.5 text-[11px]">
+                    {booking.services.map((s) => (
+                      <div key={s.id} className="flex justify-between">
+                        <span>{s.name}</span>
+                        <span>Rp {s.price.toLocaleString('id-ID')}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="py-2.5 space-y-1 text-[11px]">
+                    <div className="flex justify-between">
+                      <span>Subtotal:</span>
+                      <span>Rp {subtotal.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>PPN (11%):</span>
+                      <span>Rp {tax.toLocaleString('id-ID')}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-xs pt-1 border-t border-gray-300">
+                      <span>TOTAL:</span>
+                      <span>Rp {total.toLocaleString('id-ID')}</span>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-dashed border-gray-400 text-center text-[10px] text-gray-500">
+                    <p>Terima kasih atas kunjungan Anda!</p>
+                    <p>Simpan struk ini sebagai bukti resmi.</p>
+                  </div>
                 </div>
-                <p className="text-center text-xs text-muted-foreground mt-2">
-                  Preview struk thermal 80mm - Klik icon printer untuk mencetak
-                </p>
               </CardContent>
             </Card>
           </div>
 
-          {/* Right Column - Order Summary */}
-          <div className="lg:col-span-5">
-            <Card className="sticky top-24 lg:sticky lg:top-6 h-fit">
+          {/* Right Column - Order Summary & Final Actions */}
+          <div className="lg:col-span-5 space-y-6">
+            <Card>
               <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  Ringkasan Pesanan
-                  <Badge variant="outline" className="text-xs">{booking.paymentStatus}</Badge>
-                </CardTitle>
+                <CardTitle>Ringkasan Tagihan</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Customer & Vehicle Info */}
-                <div className="space-y-3 p-3 bg-muted/50 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
-                      <span className="font-medium">{booking.customer.name}</span>
-                    </div>
-                    {booking.customer.loyaltyTier !== 'Bronze' && (
-                      <Badge variant="outline" className="bg-yellow-50 border-yellow-200 text-yellow-700 text-xs">
-                        {booking.customer.loyaltyTier}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <LicensePlateChip plate={booking.vehicle.plate} vehicleType={booking.vehicle.type} />
-                  </div>
-                </div>
-
-                {/* Services Breakdown */}
-                <div className="space-y-2 border-t pt-4">
+                <div className="space-y-2">
                   {booking.services.map((service) => (
                     <div key={service.id} className="flex justify-between text-sm">
                       <span className="text-muted-foreground">{service.name}</span>
@@ -555,63 +599,15 @@ export default function CheckoutPage({ booking = mockBooking }) {
                   ))}
                 </div>
 
-                {/* Price Breakdown */}
-                <div className="space-y-2 border-t pt-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="font-medium">Rp {subtotal.toLocaleString('id-ID')}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">PPN (11%)</span>
-                    <span className="font-medium">Rp {tax.toLocaleString('id-ID')}</span>
-                  </div>
-                  <div className="flex justify-between text-xl font-bold border-t pt-2">
-                    <span>GRAND TOTAL</span>
-                    <span className="text-primary font-montserrat text-2xl">Rp {total.toLocaleString('id-ID')}</span>
-                  </div>
-                </div>
-
                 {/* Payment Summary */}
                 <div className="space-y-2 border-t pt-4">
                   <Label className="text-sm font-medium">Metode: {paymentMethod} {splitPayment && '(Split)'}</Label>
-                  {splitPayment ? (
-                    <>
-                      {amounts.cash > 0 && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <CreditCard className="h-3 w-3" /> Tunai
-                          </span>
-                          <span className="font-medium">Rp {amounts.cash.toLocaleString('id-ID')}</span>
-                        </div>
-                      )}
-                      {amounts.qris > 0 && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <QrCode className="h-3 w-3" /> QRIS
-                          </span>
-                          <span className="font-medium">Rp {amounts.qris.toLocaleString('id-ID')}</span>
-                        </div>
-                      )}
-                      {amounts.transfer > 0 && (
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <Building className="h-3 w-3" /> Transfer
-                          </span>
-                          <span className="font-medium">Rp {amounts.transfer.toLocaleString('id-ID')}</span>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-1 text-muted-foreground">
-                        {paymentMethod === 'CASH' && <CreditCard className="h-3 w-3" />}
-                        {paymentMethod === 'QRIS' && <QrCode className="h-3 w-3" />}
-                        {paymentMethod === 'TRANSFER' && <Building className="h-3 w-3" />}
-                        {paymentMethod}
-                      </span>
-                      <span className="font-bold font-montserrat text-primary">Rp {total.toLocaleString('id-ID')}</span>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="flex items-center gap-1 text-muted-foreground">
+                      <CreditCard className="h-3 w-3" /> {paymentMethod}
+                    </span>
+                    <span className="font-bold font-montserrat text-primary">Rp {total.toLocaleString('id-ID')}</span>
+                  </div>
                 </div>
 
                 {/* Actions */}
@@ -634,10 +630,20 @@ export default function CheckoutPage({ booking = mockBooking }) {
                       </>
                     )}
                   </Button>
+
+                  <Button
+                    variant="outline"
+                    className="w-full gap-2 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/30"
+                    onClick={handleSendWhatsApp}
+                  >
+                    <Smartphone className="h-4 w-4" />
+                    <span>Kirim Struk via WhatsApp</span>
+                  </Button>
+
                   <Link href="/kasir/antrian">
-                    <Button variant="outline" className="w-full gap-2 py-2 border-destructive text-destructive hover:bg-destructive/10">
+                    <Button variant="ghost" className="w-full gap-2 text-muted-foreground hover:text-foreground">
                       <XCircle className="h-4 w-4" />
-                      Batal
+                      Kembali ke Antrian
                     </Button>
                   </Link>
                 </div>
@@ -663,23 +669,23 @@ export default function CheckoutPage({ booking = mockBooking }) {
                 </div>
                 <h3 className="font-montserrat text-lg font-bold">Pembayaran Berhasil!</h3>
                 <p className="text-sm text-muted-foreground">
-                  Struk untuk booking <span className="font-montserrat font-bold">{booking.bookingCode}</span> telah dicetak.
+                  Struk untuk booking <span className="font-montserrat font-bold">{booking.bookingCode}</span> telah siap.
                 </p>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1" onClick={() => setShowPrintDialog(false)}>
-                    Tutup
+                  <Button variant="outline" className="flex-1 gap-1" onClick={handleSendWhatsApp}>
+                    <Smartphone className="h-4 w-4 text-emerald-600" />
+                    Kirim WA
                   </Button>
                   <Button className="flex-1" onClick={handlePrint}>
                     <Printer className="h-4 w-4 mr-1" />
                     Cetak Lagi
                   </Button>
                 </div>
-                <Button variant="ghost" className="w-full" onClick={() => {
-                  setShowPrintDialog(false);
-                  // Navigate back to kanban
-                }}>
-                  Kembali ke Antrian
-                </Button>
+                <Link href="/kasir/antrian">
+                  <Button variant="ghost" className="w-full mt-2" onClick={() => setShowPrintDialog(false)}>
+                    Kembali ke Antrian
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>

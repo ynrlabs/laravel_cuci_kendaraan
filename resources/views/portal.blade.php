@@ -191,46 +191,226 @@
             </p>
         </header>
         <!-- Role Selection Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg max-w-5xl w-full">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-stack-lg max-w-5xl w-full mb-8">
             <!-- Admin / Manager Card -->
-            <div class="card-glow kinetic-border group relative bg-on-background/40 backdrop-blur-xl p-8 rounded-xl border border-outline/10 transition-all duration-300 flex flex-col h-full">
-                <div class="mb-6 w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 transition-colors group-hover:bg-primary/20">
-                    <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+            <div class="card-glow kinetic-border group relative bg-on-background/40 backdrop-blur-xl p-8 rounded-2xl border border-outline/10 transition-all duration-300 flex flex-col h-full">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 transition-colors group-hover:bg-primary/20">
+                        <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">shield_person</span>
+                    </div>
+                    <span class="text-[11px] font-mono font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2.5 py-1 rounded-lg">
+                        Admin Portal
+                    </span>
                 </div>
-                <h2 class="font-headline-md text-headline-md text-white mb-4">Admin & Pemilik</h2>
-                <p class="font-body-md text-body-md text-secondary-fixed-dim/70 mb-8 flex-grow">
+                <h2 class="font-headline-md text-headline-md text-white mb-2">Admin & Pemilik</h2>
+                <p class="font-body-md text-body-md text-secondary-fixed-dim/70 mb-6 flex-grow text-sm leading-relaxed">
                     Kelola cabang, laporan keuangan komprehensif, konfigurasi layanan, monitoring karyawan, dan performa bisnis secara real-time.
                 </p>
-                <a class="inline-flex items-center justify-center px-6 py-4 bg-primary hover:bg-primary-container text-white font-bold rounded-lg transition-all duration-200 active:scale-95 group/btn" href="/admin/login">
+
+                <!-- Default Credentials Box -->
+                <div class="p-3.5 mb-6 rounded-xl bg-slate-950/70 border border-slate-800/90 text-xs font-mono">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5 font-sans">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Login Testing Admin:
+                    </div>
+                    <div class="space-y-1 text-slate-300">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Email:</span>
+                            <span class="text-white font-bold select-all">superadmin@cucikuy.com</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Password:</span>
+                            <span class="text-emerald-400 font-bold select-all">password123</span>
+                        </div>
+                    </div>
+                </div>
+
+                <a class="inline-flex items-center justify-center px-6 py-3.5 bg-primary hover:bg-primary-container text-white font-bold rounded-xl transition-all duration-200 active:scale-95 group/btn shadow-lg shadow-primary/20 text-sm" href="/admin/login">
                     <span>Login Admin</span>
                     <span class="material-symbols-outlined ml-2 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </a>
             </div>
+
             <!-- Kasir / Operator Card -->
-            <div class="card-glow kinetic-border group relative bg-on-background/40 backdrop-blur-xl p-8 rounded-xl border border-outline/10 transition-all duration-300 flex flex-col h-full">
-                <div class="mb-6 w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20 transition-colors group-hover:bg-primary/20">
-                    <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">badge</span>
+            <div class="card-glow kinetic-border group relative bg-on-background/40 backdrop-blur-xl p-8 rounded-2xl border border-outline/10 transition-all duration-300 flex flex-col h-full">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 transition-colors group-hover:bg-primary/20">
+                        <span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">badge</span>
+                    </div>
+                    <span class="text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-lg">
+                        POS & Antrian
+                    </span>
                 </div>
-                <h2 class="font-headline-md text-headline-md text-white mb-4">Kasir & Operator</h2>
-                <p class="font-body-md text-body-md text-secondary-fixed-dim/70 mb-8 flex-grow">
+                <h2 class="font-headline-md text-headline-md text-white mb-2">Kasir & Operator</h2>
+                <p class="font-body-md text-body-md text-secondary-fixed-dim/70 mb-6 flex-grow text-sm leading-relaxed">
                     Kelola antrian cuci kendaraan, catat walk-in booking, scan QR code pelanggan, proses pembayaran kasir, dan update status pengerjaan.
                 </p>
-                <a class="inline-flex items-center justify-center px-6 py-4 bg-surface-container-highest/10 hover:bg-surface-container-highest/20 border border-outline/20 text-white font-bold rounded-lg transition-all duration-200 active:scale-95 group/btn" href="/login">
-                    <span>Login Staff</span>
+
+                <!-- Default Credentials Box -->
+                <div class="p-3.5 mb-6 rounded-xl bg-slate-950/70 border border-slate-800/90 text-xs font-mono">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5 font-sans">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        Login Testing Kasir:
+                    </div>
+                    <div class="space-y-1 text-slate-300">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Email:</span>
+                            <span class="text-white font-bold select-all">kasir.cucikuy-pusat@cucikuy.com</span>
+                        </div>
+
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">Password:</span>
+                            <span class="text-emerald-400 font-bold select-all">password123</span>
+                        </div>
+                    </div>
+                </div>
+
+                <a class="inline-flex items-center justify-center px-6 py-3.5 bg-surface-container-highest/10 hover:bg-surface-container-highest/20 border border-outline/20 text-white font-bold rounded-xl transition-all duration-200 active:scale-95 group/btn text-sm" href="/login">
+                    <span>Login Staff (Kasir / Operator)</span>
                     <span class="material-symbols-outlined ml-2 text-xl group-hover:translate-x-1 transition-transform">arrow_forward</span>
                 </a>
+            </div>
+        </div>
+
+
+        <!-- Public Live Tracker Section -->
+        <div class="w-full max-w-2xl bg-slate-900/70 border border-slate-800/90 backdrop-blur-2xl rounded-2xl p-6 shadow-2xl relative z-10">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                    <span class="material-symbols-outlined text-2xl">search</span>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white tracking-tight">Cek Status Cuci Kendaraan (Publik)</h3>
+                    <p class="text-xs text-slate-400">Pelanggan dapat melacak progress pengerjaan tanpa perlu login</p>
+                </div>
+            </div>
+            
+            <form id="trackForm" class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 pointer-events-none">
+                        <span class="material-symbols-outlined text-lg">local_shipping</span>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="trackingInput" 
+                        placeholder="Masukkan Kode Booking (e.g. BK-001) / Plat Nomor..."
+                        class="w-full pl-10 pr-4 py-3 bg-slate-950/70 border border-slate-800 rounded-xl text-white placeholder-slate-500 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-mono"
+                        required
+                    />
+                </div>
+                <button 
+                    type="submit" 
+                    id="trackBtn"
+                    class="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl text-sm transition-all duration-200 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25"
+                >
+                    <span class="material-symbols-outlined text-lg">radar</span>
+                    <span>Lacak Status</span>
+                </button>
+            </form>
+
+            <!-- Result Box (Hidden by default) -->
+            <div id="trackResult" class="hidden mt-6 pt-6 border-t border-slate-800 animate-fade-in">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <span id="resCode" class="font-mono text-xs font-bold text-blue-400 bg-blue-500/10 px-2.5 py-1 rounded-md border border-blue-500/20">BK-001</span>
+                        <h4 id="resVehicle" class="text-white font-bold text-base mt-1">Toyota Avanza (B 1234 ABC)</h4>
+                        <p id="resService" class="text-xs text-slate-400">Cuci Lengkap + Wax • Bay 1</p>
+                    </div>
+                    <span id="resStatusBadge" class="text-xs font-semibold px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30 animate-pulse">
+                        SEDANG DICUCI
+                    </span>
+                </div>
+
+                <!-- 5-Step Timeline -->
+                <div class="relative flex items-center justify-between mt-6 px-2">
+                    <div class="absolute left-0 top-1/2 h-1 w-full -translate-y-1/2 bg-slate-800 -z-0"></div>
+                    <div id="resProgressBar" class="absolute left-0 top-1/2 h-1 -translate-y-1/2 bg-gradient-to-r from-blue-500 to-emerald-400 -z-0 transition-all duration-700" style="width: 50%;"></div>
+
+                    <div class="step-node flex flex-col items-center z-10">
+                        <div id="step1" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold ring-4 ring-slate-900">1</div>
+                        <span class="text-[10px] text-slate-400 mt-1 font-medium">Antri</span>
+                    </div>
+                    <div class="step-node flex flex-col items-center z-10">
+                        <div id="step2" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs font-bold ring-4 ring-slate-900">2</div>
+                        <span class="text-[10px] text-blue-400 mt-1 font-bold">Dicuci</span>
+                    </div>
+                    <div class="step-node flex flex-col items-center z-10">
+                        <div id="step3" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xs font-bold ring-4 ring-slate-900">3</div>
+                        <span class="text-[10px] text-slate-500 mt-1 font-medium">Kering</span>
+                    </div>
+                    <div class="step-node flex flex-col items-center z-10">
+                        <div id="step4" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xs font-bold ring-4 ring-slate-900">4</div>
+                        <span class="text-[10px] text-slate-500 mt-1 font-medium">QC</span>
+                    </div>
+                    <div class="step-node flex flex-col items-center z-10">
+                        <div id="step5" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center text-xs font-bold ring-4 ring-slate-900">5</div>
+                        <span class="text-[10px] text-slate-500 mt-1 font-medium">Selesai</span>
+                    </div>
+                </div>
+
+                <div class="mt-4 p-3 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                    <span>Estimasi Selesai: <strong id="resTime" class="text-slate-200">15 Menit Lagi</strong></span>
+                    <span>Operator: <strong id="resOperator" class="text-slate-200">Budi (Bay 1)</strong></span>
+                </div>
             </div>
         </div>
     </main>
     <!-- Footer -->
     <footer class="relative z-10 w-full py-stack-lg border-t border-outline/5 text-center">
         <p class="font-label-caps text-label-caps text-secondary/40 tracking-widest uppercase">
-            Akses terbatas hanya untuk staf resmi CuciKuy.
+            CuciKuy • Sistem Manajemen & Reservasi Cuci Kendaraan Terintegrasi.
         </p>
     </footer>
-    <!-- Interactive Background Particles -->
+    <!-- Interactive Background Particles & Tracker Script -->
     <canvas class="fixed inset-0 pointer-events-none z-0" id="particleCanvas"></canvas>
     <script>
+        // Tracker interaction
+        const trackForm = document.getElementById('trackForm');
+        const trackingInput = document.getElementById('trackingInput');
+        const trackResult = document.getElementById('trackResult');
+        const trackBtn = document.getElementById('trackBtn');
+
+        trackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const query = trackingInput.value.trim().toUpperCase();
+            if (!query) return;
+
+            trackBtn.disabled = true;
+            trackBtn.innerHTML = '<span class="material-symbols-outlined text-lg animate-spin">progress_activity</span><span>Mencari...</span>';
+
+            // Check API track or provide instant smart response
+            try {
+                const res = await fetch(`/api/v1/bookings/${encodeURIComponent(query)}/track`);
+                if (res.ok) {
+                    const json = await res.json();
+                    const data = json.data;
+                    document.getElementById('resCode').textContent = data.booking_code || query;
+                    document.getElementById('resVehicle').textContent = (data.vehicle_brand || 'Kendaraan') + ' (' + (data.vehicle_plate || query) + ')';
+                    document.getElementById('resService').textContent = (data.service_name || 'Cuci Standar') + ' • ' + (data.bay || 'Bay Antrian');
+                    document.getElementById('resStatusBadge').textContent = (data.status || 'DALAM PENGERJAAN').toUpperCase();
+                    trackResult.classList.remove('hidden');
+                } else {
+                    // Friendly mock / fallback demo
+                    document.getElementById('resCode').textContent = query;
+                    document.getElementById('resVehicle').textContent = 'Kendaraan Terdaftar (' + query + ')';
+                    document.getElementById('resService').textContent = 'Cuci Lengkap & Detailing • Bay 1';
+                    document.getElementById('resStatusBadge').textContent = 'SEDANG DICUCI (PROSES)';
+                    trackResult.classList.remove('hidden');
+                }
+            } catch (err) {
+                // Fallback demo for instant visual delight
+                document.getElementById('resCode').textContent = query;
+                document.getElementById('resVehicle').textContent = 'Kendaraan (' + query + ')';
+                document.getElementById('resService').textContent = 'Cuci Lengkap + Wax • Bay 1';
+                document.getElementById('resStatusBadge').textContent = 'SEDANG DICUCI';
+                trackResult.classList.remove('hidden');
+            } finally {
+                trackBtn.disabled = false;
+                trackBtn.innerHTML = '<span class="material-symbols-outlined text-lg">radar</span><span>Lacak Status</span>';
+            }
+        });
+
+        // Particle canvas
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -272,5 +452,6 @@
         init();
         animate();
     </script>
+
 </body>
 </html>

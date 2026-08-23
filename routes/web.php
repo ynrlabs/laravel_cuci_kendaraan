@@ -7,8 +7,10 @@ Route::get('/', function () {
     return view('portal');
 });
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'role:cashier,kasir,operator,admin_branch,admin_cabang,super_admin', 'branch.scope'])->group(function () {
     Route::prefix('kasir')->name('kasir.')->group(function () {
+
+
         Route::get('/dashboard', function () {
             return Inertia::render('Kasir/Dashboard', [
                 'pageTitle' => 'Dashboard',

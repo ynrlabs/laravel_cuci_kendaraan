@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from 'ziggy-js';
 import './bootstrap';
 import '@/Components/Layouts/MainLayout';
 import '@/Components/UI/index';
+
 
 // Global loading screen component for Inertia page transitions
 const LoadingScreen = () => {

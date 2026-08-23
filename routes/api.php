@@ -5,15 +5,16 @@ use Illuminate\Support\Facades\Route;
 
 // API v1 Routes
 Route::prefix('v1')->group(function () {
-    // Auth routes (public)
+    // Auth routes (public) with rate limiting
     Route::prefix('auth')->group(function () {
-        Route::post('register', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'register']);
-        Route::post('login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'login']);
-        Route::post('forgot-password', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'forgotPassword']);
-        Route::post('reset-password', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'resetPassword']);
-        Route::post('send-otp', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'sendOtp']);
-        Route::post('verify-otp', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'verifyOtp']);
-        Route::post('social-login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'socialLogin']);
+        Route::post('register', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'register'])->middleware('throttle:10,1');
+        Route::post('login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'login'])->middleware('throttle:10,1');
+        Route::post('forgot-password', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'forgotPassword'])->middleware('throttle:6,1');
+        Route::post('reset-password', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'resetPassword'])->middleware('throttle:6,1');
+        Route::post('send-otp', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'sendOtp'])->middleware('throttle:otp');
+        Route::post('verify-otp', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'verifyOtp'])->middleware('throttle:otp');
+        Route::post('social-login', [\App\Http\Controllers\Api\V1\Auth\AuthController::class, 'socialLogin'])->middleware('throttle:10,1');
+
         
         // Protected auth routes
         Route::middleware('auth:sanctum')->group(function () {

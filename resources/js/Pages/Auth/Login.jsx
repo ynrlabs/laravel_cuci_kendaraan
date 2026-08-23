@@ -136,12 +136,103 @@ export default function Login() {
             </Button>
           </form>
 
+          {/* Default Testing Credentials Helper */}
+          <div className="mt-6 pt-5 border-t border-slate-800/90">
+            <div className="p-4 rounded-xl bg-slate-950/80 border border-slate-800 shadow-inner">
+              <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-800/80">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-xs font-bold text-slate-200 uppercase tracking-wider font-mono">
+                    Akun Demo & Testing:
+                  </span>
+                </div>
+                <span className="text-[10px] font-mono bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded border border-emerald-500/20 font-bold">
+                  Password: password123
+                </span>
+              </div>
+
+              <div className="space-y-2.5">
+                {/* Kasir */}
+                <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800/90 flex items-center justify-between hover:border-blue-500/40 transition-colors">
+                  <div className="min-w-0 pr-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-white">Kasir Cabang Pusat</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-blue-500/20 text-blue-300 font-mono">POS / Antrian</span>
+                    </div>
+                    <div className="text-[11px] font-mono text-slate-300 truncate select-all mt-0.5">
+                      kasir.cucikuy-pusat@cucikuy.com
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setData('email', 'kasir.cucikuy-pusat@cucikuy.com');
+                      setData('password', 'password123');
+                    }}
+                    className="flex-shrink-0 px-2.5 py-1 text-[11px] font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-md transition-all shadow-sm active:scale-95"
+                  >
+                    Gunakan
+                  </button>
+                </div>
+
+                {/* Operator */}
+                <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800/90 flex items-center justify-between hover:border-blue-500/40 transition-colors">
+                  <div className="min-w-0 pr-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-white">Operator Cuci Pusat</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 font-mono">Pengerjaan</span>
+                    </div>
+                    <div className="text-[11px] font-mono text-slate-300 truncate select-all mt-0.5">
+                      supervisor.cucikuy-pusat@cucikuy.com
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setData('email', 'supervisor.cucikuy-pusat@cucikuy.com');
+                      setData('password', 'password123');
+                    }}
+                    className="flex-shrink-0 px-2.5 py-1 text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-md transition-all shadow-sm active:scale-95"
+                  >
+                    Gunakan
+                  </button>
+                </div>
+
+
+                {/* Super Admin link */}
+                <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800/90 flex items-center justify-between hover:border-blue-500/40 transition-colors">
+                  <div className="min-w-0 pr-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-white">Super Admin (Owner)</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono">Panel Admin</span>
+                    </div>
+                    <div className="text-[11px] font-mono text-slate-300 truncate select-all mt-0.5">
+                      superadmin@cucikuy.com
+                    </div>
+                  </div>
+                  <a
+                    href="/admin/login"
+                    className="flex-shrink-0 px-2.5 py-1 text-[11px] font-bold bg-amber-600/80 hover:bg-amber-500 text-white rounded-md transition-all shadow-sm active:scale-95"
+                  >
+                    Ke Admin
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-3 pt-2 text-center text-[10px] text-slate-400 border-t border-slate-800/80">
+                💡 Klik tombol <strong class="text-blue-400">Gunakan</strong> untuk otomatis mengisi form di atas.
+              </div>
+            </div>
+          </div>
+
           {/* Footer note */}
-          <div className="mt-8 text-center text-xs text-slate-500">
-            Hanya untuk Kasir & Operator cabang resmi CuciKuy.
+          <div className="mt-4 text-center text-xs text-slate-500">
+            CuciKuy • Sistem Manajemen Cuci Kendaraan Terintegrasi
           </div>
         </div>
       </div>
     </>
   );
 }
+
+

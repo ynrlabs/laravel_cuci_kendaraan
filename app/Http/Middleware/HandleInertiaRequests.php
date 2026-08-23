@@ -43,12 +43,16 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'email' => $request->user()->email,
                     'avatar' => $request->user()->avatar ?? null,
+                    'branch_id' => $request->user()->getBranchId(),
+                    'roles' => $request->user()->userRoles()->pluck('role')->toArray(),
                 ] : null,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
             ],
+            'appName' => config('app.name', 'CuciKuy'),
         ];
     }
 }
+

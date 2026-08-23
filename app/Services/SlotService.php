@@ -369,4 +369,23 @@ class SlotService
 
         return $statistics;
     }
-}
+
+    /**
+     * Clear cached slot availability for a branch and optional date
+     */
+    public function clearSlotCache(Branch|string $branch, ?string $date = null): void
+    {
+        $branchId = $branch instanceof Branch ? $branch->id : $branch;
+
+        if ($date) {
+            Cache::forget(self::CACHE_PREFIX . $branchId . ':' . $date);
+        } else {
+            // Invalidate next 7 days
+            $today = now();
+            for ($i = 0; $i < 7; $i++) {
+                $targetDate = $today->copy()->addDays($i)->format('Y-m-d');
+                Cache::forget(self::CACHE_PREFIX . $branchId . ':' . $targetDate);
+            }
+        }
+    }
+}
