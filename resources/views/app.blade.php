@@ -24,6 +24,7 @@
     @inertia
     
     <!-- Service Worker Registration -->
+    @if (app()->isProduction())
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
@@ -66,5 +67,25 @@
         });
       }
     </script>
+    @else
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for (var i = 0; i < registrations.length; i++) {
+            registrations[i].unregister();
+          }
+        });
+        if ('caches' in window) {
+          caches.keys().then(function(cacheNames) {
+            cacheNames.forEach(function(cacheName) {
+              if (cacheName.startsWith('cucikuy-')) {
+                caches.delete(cacheName);
+              }
+            });
+          });
+        }
+      }
+    </script>
+    @endif
 </body>
 </html>
