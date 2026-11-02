@@ -39,6 +39,21 @@ class DatabaseSeeder extends Seeder
             'branch_id' => null,
         ]);
 
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@cucikuy.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin123'),
+                'email_verified_at' => now(),
+                'is_active' => true,
+            ]
+        );
+
+        $admin->userRoles()->firstOrCreate([
+            'role' => UserRole::SUPER_ADMIN,
+            'branch_id' => null,
+        ]);
+
         // Create Admin Branch users
         $idx = 1;
         foreach ($branches as $branch) {
